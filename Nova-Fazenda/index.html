@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA FAZENDA - Investissement Agricole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        darker: '#020617',
+                        primary: '#16a34a',
+                        secondary: '#22c55e',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(2,6,23,0.98) 100%);
+        }
+        
+        .card-glass {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .hero-slide {
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #16a34a;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .btn-glow:hover {
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cookie-consent {
+            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-dark text-gray-200">
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsent" class="cookie-consent fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 hidden z-50">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+            <p class="mb-4 md:mb-0">Nous utilisons des cookies pour améliorer votre expérience. En continuant, vous acceptez notre <a href="#" class="text-primary underline">politique de cookies</a>.</p>
+            <button id="acceptCookies" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md transition-colors">Accepter</button>
+        </div>
+    </div>
+
+    <!-- Header/Navigation -->
+    <header class="bg-dark/90 backdrop-blur-md shadow-lg sticky top-0 z-40 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <img src="image/logo.png" alt="NOVA FAZENDA Logo" class="h-12 w-12 mr-3 rounded-full border-2 border-primary">
+                    <h1 class="text-xl font-bold text-white">NOVA FAZENDA</h1>
+                </div>
+                
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link text-gray-300 hover:text-white font-medium transition-colors">Accueil</a>
+                    <a href="#partnership" class="nav-link text-gray-300 hover:text-white font-medium transition-colors">Partenariat</a>
+                    <a href="#investment-calculator-section" class="nav-link text-gray-300 hover:text-white font-medium transition-colors">Investissement</a>
+                    <a href="#testimonials" class="nav-link text-gray-300 hover:text-white font-medium transition-colors">Témoignages</a>
+                    <a href="#contact" class="nav-link text-gray-300 hover:text-white font-medium transition-colors">Contact</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="espace-membre.html" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md hidden md:block transition-colors btn-glow">Espace Membre</a>
+                    <button id="mobileMenuButton" class="md:hidden text-gray-300 hover:text-white">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4">
+                <a href="#home" class="block py-2 text-gray-300 hover:text-white transition-colors">Accueil</a>
+                <a href="#partnership" class="block py-2 text-gray-300 hover:text-white transition-colors">Partenariat</a>
+                <a href="#investment-calculator-section" class="block py-2 text-gray-300 hover:text-white transition-colors">Investissement</a>
+                <a href="#testimonials" class="block py-2 text-gray-300 hover:text-white transition-colors">Témoignages</a>
+                <a href="#contact" class="block py-2 text-gray-300 hover:text-white transition-colors">Contact</a>
+                <a href="espace-membre.html" class="block py-2 text-primary font-medium">Espace Membre</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative overflow-hidden gradient-bg">
+        <div id="heroSlider" class="relative h-screen">
+            <!-- Slide 1 -->
+            <div class="hero-slide absolute inset-0 flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); opacity: 1;">
+                <div class="absolute inset-0 bg-black/60"></div>
+                <div class="container mx-auto px-4 relative z-10 text-center text-white">
+                    <h2 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">Investissez dans <span class="text-primary">l'agriculture durable</span></h2>
+                    <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-gray-300">Rejoignez notre communauté de partenaires et bénéficiez de rendements attractifs tout en soutenant le développement rural.</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="#partnership" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-md text-lg font-medium transition-colors btn-glow">Devenir Partenaire</a>
+                        <a href="#investment-calculator-section" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-3 rounded-md text-lg font-medium transition-colors">Investir Maintenant</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 2 -->
+            <div class="hero-slide absolute inset-0 flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1501706362039-c06b2d439385?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); opacity: 0;">
+                <div class="absolute inset-0 bg-black/60"></div>
+                <div class="container mx-auto px-4 relative z-10 text-center text-white">
+                    <h2 class="text-4xl md:text-6xl font-bold mb-6 leading-tight"><span class="text-primary">Élevage responsable</span> et éthique</h2>
+                    <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-gray-300">Nos animaux sont élevés dans le respect des normes les plus strictes de bien-être animal et d'écologie.</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="#partnership" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-md text-lg font-medium transition-colors btn-glow">En savoir plus</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 3 -->
+            <div class="hero-slide absolute inset-0 flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1470114716159-e389f8712fda?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); opacity: 0;">
+                <div class="absolute inset-0 bg-black/60"></div>
+                <div class="container mx-auto px-4 relative z-10 text-center text-white">
+                    <h2 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">Rendements garantis <span class="text-primary">jusqu'à 20%</span></h2>
+                    <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-gray-300">Notre modèle économique éprouvé vous permet d'investir en toute confiance dans l'agriculture de demain.</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="#investment" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-md text-lg font-medium transition-colors btn-glow">Calculer mes gains</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slider Controls -->
+        <div class="absolute bottom-8 left-0 right-0 flex justify-center space-x-2 z-10">
+            <button class="slider-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 focus:outline-none transition-colors" data-slide="0"></button>
+            <button class="slider-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 focus:outline-none transition-colors" data-slide="1"></button>
+            <button class="slider-dot w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 focus:outline-none transition-colors" data-slide="2"></button>
+        </div>
+        
+        <!-- Floating Elements -->
+        <div class="absolute top-1/4 left-10 w-8 h-8 rounded-full bg-primary/20 animate-float hidden md:block"></div>
+        <div class="absolute top-1/3 right-20 w-12 h-12 rounded-full bg-secondary/20 animate-float delay-100 hidden md:block"></div>
+        <div class="absolute bottom-1/4 left-1/4 w-6 h-6 rounded-full bg-primary/20 animate-float delay-200 hidden md:block"></div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="py-20 bg-dark">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="text-primary font-medium">Nos valeurs fondamentales</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">Ce qui nous distingue</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Value Card 1 -->
+                <div class="card-glass rounded-xl p-8 hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-800 hover:border-primary/30">
+                    <div class="text-primary mb-6">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-leaf text-3xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Durabilité</h3>
+                    <p class="text-gray-400">Nous pratiquons une agriculture respectueuse de l'environnement, avec des méthodes qui préservent les sols et la biodiversité.</p>
+                </div>
+                
+                <!-- Value Card 2 -->
+                <div class="card-glass rounded-xl p-8 hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-800 hover:border-primary/30">
+                    <div class="text-primary mb-6">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-heart text-3xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Bien-être animal</h3>
+                    <p class="text-gray-400">Nos animaux bénéficient d'espaces adaptés, d'une alimentation naturelle et de soins vétérinaires réguliers.</p>
+                </div>
+                
+                <!-- Value Card 3 -->
+                <div class="card-glass rounded-xl p-8 hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-800 hover:border-primary/30">
+                    <div class="text-primary mb-6">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-hand-holding-usd text-3xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Rentabilité</h3>
+                    <p class="text-gray-400">Notre modèle économique vous offre des rendements attractifs tout en soutenant le développement rural local.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partnership Section -->
+    <section id="partnership" class="py-20 bg-darker">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-12 lg:mb-0 lg:pr-12">
+                    <div class="relative">
+                        <img src="image/partenaire.jpg" alt="Partenariat NOVA FAZENDA" class="rounded-xl shadow-2xl w-full">
+                        <div class="absolute -bottom-6 -right-6 bg-primary text-white p-6 rounded-xl shadow-lg hidden md:block">
+                            <div class="text-3xl font-bold">3 500 FCFA</div>
+                            <div class="text-sm">par mois/animal</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2">
+                    <span class="text-primary font-medium">Partenariat gagnant-gagnant</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mt-2 mb-6">Devenez Partenaire</h2>
+                    <p class="text-gray-400 mb-8">Confiez-nous vos animaux pour seulement 3500 Fcfa par mois/animal. En devenant partenaire de NOVA FAZENDA, vous investissez dans l'élevage durable et bénéficiez de nombreux avantages :</p>
+                    
+                    <ul class="mb-8 space-y-4">
+                        <li class="flex items-start">
+                            <div class="bg-primary/10 text-primary p-1 rounded-full mr-4 mt-1">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">Soins professionnels pour vos animaux</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-primary/10 text-primary p-1 rounded-full mr-4 mt-1">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">Alimentation 100% biologique et locale</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-primary/10 text-primary p-1 rounded-full mr-4 mt-1">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">Suivi vétérinaire régulier</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-primary/10 text-primary p-1 rounded-full mr-4 mt-1">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">Rendements mensuels garantis</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-primary/10 text-primary p-1 rounded-full mr-4 mt-1">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">Visites organisées sur la ferme</span>
+                        </li>
+                    </ul>
+                    
+                    <button id="showPartnershipForm" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-md text-lg font-medium transition-colors btn-glow">Commencer maintenant</button>
+                </div>
+            </div>
+            
+            <!-- Partnership Form (hidden by default) -->
+            <div id="partnershipForm" class="mt-16 hidden">
+                <div class="max-w-3xl mx-auto card-glass p-8 rounded-xl shadow-xl border border-gray-800">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-white">Formulaire de Partenariat</h3>
+                        <p class="text-gray-400 mt-2">Remplissez ce formulaire pour devenir partenaire</p>
+                    </div>
+                    
+                    <form id="partnershipFormElement" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="fullName" class="block text-gray-300 mb-2">Nom complet</label>
+                                <input type="text" id="fullName" name="fullName" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                                <p id="fullNameError" class="text-red-400 text-sm mt-1 hidden"></p>
+                            </div>
+                            
+                            <div>
+                                <label for="email" class="block text-gray-300 mb-2">Email</label>
+                                <input type="email" id="email" name="email" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                                <p id="emailError" class="text-red-400 text-sm mt-1 hidden"></p>
+                            </div>
+                            
+                            <div>
+                                <label for="phone" class="block text-gray-300 mb-2">Téléphone</label>
+                                <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                                <p id="phoneError" class="text-red-400 text-sm mt-1 hidden"></p>
+                            </div>
+                            
+                            <div>
+                                <label for="animals" class="block text-gray-300 mb-2">Nombre d'animaux</label>
+                                <select id="animals" name="animals" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="1">1 animal</option>
+                                    <option value="2">2 animaux</option>
+                                    <option value="3">3 animaux</option>
+                                    <option value="4">4 animaux</option>
+                                    <option value="5">5 animaux</option>
+                                    <option value="6">6 animaux</option>
+                                    <option value="7">7 animaux</option>
+                                    <option value="8">8 animaux</option>
+                                    <option value="9">9 animaux</option>
+                                    <option value="10">10 animaux</option>
+                                    <option value="plus_de_10">Plus de 10 animaux</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="duration" class="block text-gray-300 mb-2">Durée du partenariat</label>
+                                <select id="duration" name="duration" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="6">6 mois</option>
+                                    <option value="12">12 mois</option>
+                                    <option value="18">18 mois</option>
+                                    <option value="24">24 mois</option>
+                                    <option value="plus_de_24">Plus de 24 mois</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="paymentMethod" class="block text-gray-300 mb-2">Méthode de paiement</label>
+                                <select id="paymentMethod" name="paymentMethod" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="mobile_money">Mobile Money</option>
+                                    <option value="credit_card">Carte de crédit</option>
+                                    <option value="bank_transfer">Virement bancaire</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="message" class="block text-gray-300 mb-2">Message (optionnel)</label>
+                            <textarea id="message" name="message" rows="4" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white"></textarea>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <input type="checkbox" id="terms" name="terms" class="mt-1 mr-2 bg-dark border-gray-700 rounded focus:ring-primary focus:ring-2" required>
+                            <label for="terms" class="text-gray-400">J'accepte les <a href="#" class="text-primary hover:underline">conditions générales</a> et la <a href="#" class="text-primary hover:underline">politique de confidentialité</a></label>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button type="submit" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-lg text-lg font-medium transition-colors btn-glow">Soumettre</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Section -->
+    <section id="investment-calculator-section" class="investment-calculator-wrapper">
+        <div class="inv-container">
+            <div class="inv-text-center inv-mb-16">
+                <span class="inv-text-primary inv-font-medium">Opportunité d'investissement</span>
+                <h2 class="inv-text-3xl inv-md-text-4xl inv-font-bold inv-text-white inv-mt-2">Faites croître votre capital</h2>
+            </div>
+            
+            <div class="inv-max-w-4xl inv-mx-auto">
+                <div class="inv-bg-gradient inv-rounded-xl inv-p-8 inv-mb-16 inv-border inv-border-gray-800 inv-shadow-xl">
+                    <h3 class="inv-text-2xl inv-font-bold inv-text-white inv-mb-6">Calculateur d'investissement</h3>
+                    
+                    <div class="inv-grid inv-grid-cols-1 inv-lg-grid-cols-2 inv-gap-8">
+                        <div>
+                            <div class="inv-mb-8">
+                                <label for="investmentAmount" class="inv-block inv-text-gray-300 inv-mb-4">Montant à investir (FCFA)</label>
+                                <input type="range" id="investmentAmount" min="100000" max="10000000" step="5000" value="100000" class="inv-w-full inv-mb-2 inv-accent-primary">
+                                <div class="inv-flex inv-justify-between inv-text-gray-400 inv-text-sm">
+                                    <span>100 000</span>
+                                    <span id="amountValue" class="inv-text-white inv-font-medium">100 000</span>
+                                    <span>10 000 000</span>
+                                </div>
+                            </div>
+                            
+                            <div class="inv-mb-8">
+                                <label for="investmentDuration" class="inv-block inv-text-gray-300 inv-mb-4">Durée (mois)</label>
+                                <input type="range" id="investmentDuration" min="6" max="24" step="1" value="12" class="inv-w-full inv-mb-2 inv-accent-primary">
+                                <div class="inv-flex inv-justify-between inv-text-gray-400 inv-text-sm">
+                                    <span>6</span>
+                                    <span id="durationValue" class="inv-text-white inv-font-medium">12</span>
+                                    <span>24</span>
+                                </div>
+                            </div>
+                            
+                            <div class="inv-bg-dark inv-border inv-border-gray-800 inv-rounded-lg inv-p-4">
+                                <h4 class="inv-font-bold inv-text-white inv-mb-2">Taux d'intérêt</h4>
+                                <div class="inv-flex inv-items-center">
+                                    <div class="inv-w-12 inv-h-12 inv-bg-primary-10 inv-rounded-full inv-flex inv-items-center inv-justify-center inv-mr-4">
+                                        <i class="fas fa-percentage inv-text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <div id="interestRateDisplay" class="inv-text-2xl inv-font-bold inv-text-primary">1.0%</div>
+                                        <div class="inv-text-gray-400 inv-text-sm">par mois</div>
+                                    </div>
+                                </div>
+                                <div class="inv-mt-2 inv-text-gray-400 inv-text-sm">
+                                    <span id="annualRateDisplay">12.0% par an</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="inv-bg-dark inv-border inv-border-gray-800 inv-rounded-xl inv-p-6 inv-shadow-lg">
+                            <h4 class="inv-text-lg inv-font-bold inv-text-white inv-mb-6 inv-pb-2 inv-border-b inv-border-gray-800">Projection des gains</h4>
+                            <div class="inv-space-y-4">
+                                <div class="inv-flex inv-justify-between">
+                                    <span class="inv-text-gray-400">Montant investi:</span>
+                                    <span id="investedAmount" class="inv-font-medium inv-text-white">100 000 FCFA</span>
+                                </div>
+                                <div class="inv-flex inv-justify-between">
+                                    <span class="inv-text-gray-400">Durée:</span>
+                                    <span id="displayDuration" class="inv-font-medium inv-text-white">12 mois</span>
+                                </div>
+                                <div class="inv-flex inv-justify-between">
+                                    <span class="inv-text-gray-400">Taux mensuel:</span>
+                                    <span id="monthlyRateDisplay" class="inv-font-medium inv-text-primary">1.0%</span>
+                                </div>
+                                <div class="inv-border-t inv-border-gray-800 inv-my-3"></div>
+                                <div class="inv-flex inv-justify-between">
+                                    <span class="inv-text-gray-400">Gain mensuel:</span>
+                                    <span id="monthlyGain" class="inv-font-medium inv-text-primary">1 000 FCFA</span>
+                                </div>
+                                <div class="inv-flex inv-justify-between">
+                                    <span class="inv-text-gray-400">Gain total:</span>
+                                    <span id="totalGain" class="inv-font-medium inv-text-primary">12 000 FCFA</span>
+                                </div>
+                                <div class="inv-border-t inv-border-gray-800 inv-my-3"></div>
+                                <div class="inv-flex inv-justify-between inv-font-bold inv-text-lg inv-mt-4">
+                                    <span class="inv-text-white">Montant final:</span>
+                                    <span id="finalAmount" class="inv-text-primary">112 000 FCFA</span>
+                                </div>
+                            </div>
+                            
+                            <a href="espace-membre.html" class="inv-w-full inv-mt-8 inv-bg-primary inv-hover-bg-secondary inv-text-white inv-px-6 inv-py-3 inv-rounded-lg inv-font-medium inv-transition-colors inv-btn-glow text-center block">
+                                Investir maintenant
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <style>
+    /* Styles isolés pour le calculateur d'investissement */
+    .investment-calculator-wrapper {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #0f172a; /* Bleu très foncé pour le fond */
+        color: #f8fafc; /* Blanc pour le texte principal */
+        padding: 3rem 0;
+    }
+    
+    /* Import de la police Inter */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    /* Variables de couleurs */
+    .investment-calculator-wrapper {
+        --primary: #22c55e; /* Vert pour l'accent principal */
+        --secondary: #16a34a; /* Vert plus foncé pour les survols */
+        --dark: #0f172a; /* Bleu très foncé pour le fond */
+        --darker: #0a0f1a; /* Encore plus foncé pour les gradients */
+        --text-white: #f8fafc; /* Blanc pour le texte principal */
+        --text-gray-300: #cbd5e1; /* Gris clair pour les textes secondaires */
+        --text-gray-400: #94a3b8; /* Gris moyen pour les textes tertiaires */
+        --border-gray-800: #1e293b; /* Bordure foncée */
+    }
+    
+    /* Classes personnalisées avec préfixe inv- */
+    .inv-container { width: 100%; max-width: 1200px; margin-left: auto; margin-right: auto; padding: 0 1rem; }
+    .inv-mx-auto { margin-left: auto; margin-right: auto; }
+    .inv-text-center { text-align: center; }
+    .inv-bg-dark { background-color: var(--dark); }
+    .inv-bg-gradient { background: linear-gradient(to bottom right, var(--dark), var(--darker)); }
+    .inv-text-white { color: var(--text-white); }
+    .inv-text-primary { color: var(--primary); }
+    .inv-text-gray-300 { color: var(--text-gray-300); }
+    .inv-text-gray-400 { color: var(--text-gray-400); }
+    .inv-border-gray-800 { border-color: var(--border-gray-800); }
+    .inv-bg-primary-10 { background-color: rgba(34, 197, 94, 0.1); }
+    
+    /* Bouton avec effet de lueur */
+    .inv-btn-glow {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .inv-btn-glow:after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+        transform: rotate(30deg);
+        transition: transform 0.5s ease-out;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0;
+    }
+    
+    .inv-btn-glow:hover:after {
+        opacity: 1;
+        transform: rotate(30deg) translateY(-10px);
+    }
+    
+    /* Styles pour les sliders */
+    .investment-calculator-wrapper input[type="range"] {
+        -webkit-appearance: none;
+        height: 8px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    
+    .investment-calculator-wrapper input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 24px;
+        height: 24px;
+        background: var(--primary);
+        border: 3px solid var(--text-white);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    .investment-calculator-wrapper input[type="range"]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        background: var(--primary);
+        border: 3px solid var(--text-white);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Utilitaires */
+    .inv-accent-primary { accent-color: var(--primary); }
+    .inv-bg-primary { background-color: var(--primary); }
+    .inv-hover-bg-secondary:hover { background-color: var(--secondary); }
+    
+    .inv-mb-16 { margin-bottom: 4rem; }
+    .inv-mb-6 { margin-bottom: 1.5rem; }
+    .inv-mb-8 { margin-bottom: 2rem; }
+    .inv-mb-4 { margin-bottom: 1rem; }
+    .inv-mb-2 { margin-bottom: 0.5rem; }
+    .inv-mt-2 { margin-top: 0.5rem; }
+    .inv-mt-8 { margin-top: 2rem; }
+    .inv-mt-4 { margin-top: 1rem; }
+    .inv-my-3 { margin-top: 0.75rem; margin-bottom: 0.75rem; }
+    .inv-mr-4 { margin-right: 1rem; }
+    
+    .inv-p-8 { padding: 2rem; }
+    .inv-p-6 { padding: 1.5rem; }
+    .inv-p-4 { padding: 1rem; }
+    .inv-px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .inv-py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+    .inv-pb-2 { padding-bottom: 0.5rem; }
+    
+    .inv-text-lg { font-size: 1.125rem; }
+    .inv-text-2xl { font-size: 1.5rem; }
+    .inv-text-3xl { font-size: 1.875rem; }
+    .inv-text-sm { font-size: 0.875rem; }
+    .inv-font-medium { font-weight: 500; }
+    .inv-font-bold { font-weight: 700; }
+    
+    .inv-rounded-xl { border-radius: 0.75rem; }
+    .inv-rounded-lg { border-radius: 0.5rem; }
+    .inv-rounded-full { border-radius: 9999px; }
+    .inv-border { border-width: 1px; }
+    .inv-border-t { border-top-width: 1px; }
+    .inv-border-b { border-bottom-width: 1px; }
+    .inv-shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+    .inv-shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+    
+    .inv-w-full { width: 100%; }
+    .inv-w-12 { width: 3rem; }
+    .inv-h-12 { height: 3rem; }
+    .inv-max-w-4xl { max-width: 56rem; }
+    
+    .inv-flex { display: flex; }
+    .inv-block { display: block; }
+    .inv-items-center { align-items: center; }
+    .inv-justify-center { justify-content: center; }
+    .inv-justify-between { justify-content: space-between; }
+    .inv-grid { display: grid; }
+    .inv-grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .inv-gap-8 { gap: 2rem; }
+    .inv-transition-colors { transition-property: color, background-color, border-color; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+    
+    /* Espace vertical entre les éléments */
+    .inv-space-y-4 > * + * { margin-top: 1rem; }
+    
+    /* Media Queries */
+    @media (min-width: 768px) {
+        .inv-md-text-4xl { font-size: 2.25rem; }
+    }
+    
+    @media (min-width: 1024px) {
+        .inv-lg-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    </style>
+    
+    <!-- Script isolé pour le calculateur d'investissement -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Éléments DOM
+        const amountSlider = document.getElementById('investmentAmount');
+        const durationSlider = document.getElementById('investmentDuration');
+        const amountValue = document.getElementById('amountValue');
+        const durationValue = document.getElementById('durationValue');
+        const interestRateDisplay = document.getElementById('interestRateDisplay');
+        const annualRateDisplay = document.getElementById('annualRateDisplay');
+        const monthlyRateDisplay = document.getElementById('monthlyRateDisplay');
+        const investedAmount = document.getElementById('investedAmount');
+        const displayDuration = document.getElementById('displayDuration');
+        const monthlyGain = document.getElementById('monthlyGain');
+        const totalGain = document.getElementById('totalGain');
+        const finalAmount = document.getElementById('finalAmount');
+        
+        // Fonction pour formater les nombres avec séparateurs de milliers
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+        
+        // Fonction pour calculer le taux d'intérêt mensuel en fonction de la durée
+        function calculateInterestRate(duration) {
+            let annualRate;
+            
+            if (duration >= 6 && duration < 12) {
+                annualRate = 8; // 8% par an pour 6-11 mois
+            } else if (duration >= 12 && duration < 16) {
+                annualRate = 12; // 12% par an pour 12-15 mois
+            } else {
+                annualRate = 15; // 15% par an pour 16-24 mois
+            }
+            
+            // Conversion du taux annuel en taux mensuel
+            const monthlyRate = annualRate / 12;
+            
+            return {
+                annual: annualRate,
+                monthly: monthlyRate
+            };
+        }
+        
+        // Fonction pour mettre à jour tous les calculs et affichages
+        function updateCalculations() {
+            const amount = parseInt(amountSlider.value);
+            const duration = parseInt(durationSlider.value);
+            
+            // Calcul du taux d'intérêt
+            const rates = calculateInterestRate(duration);
+            const monthlyInterestRate = rates.monthly;
+            
+            // Calcul des gains
+            const monthlyGainValue = (amount * monthlyInterestRate / 100);
+            const totalGainValue = monthlyGainValue * duration;
+            const finalAmountValue = amount + totalGainValue;
+            
+            // Mise à jour des affichages
+            amountValue.textContent = formatNumber(amount);
+            durationValue.textContent = duration;
+            
+            interestRateDisplay.textContent = monthlyInterestRate.toFixed(1) + '%';
+            annualRateDisplay.textContent = rates.annual.toFixed(1) + '% par an';
+            monthlyRateDisplay.textContent = monthlyInterestRate.toFixed(1) + '%';
+            
+            investedAmount.textContent = formatNumber(amount) + ' FCFA';
+            displayDuration.textContent = duration + ' mois';
+            monthlyGain.textContent = formatNumber(Math.round(monthlyGainValue)) + ' FCFA';
+            totalGain.textContent = formatNumber(Math.round(totalGainValue)) + ' FCFA';
+            finalAmount.textContent = formatNumber(Math.round(finalAmountValue)) + ' FCFA';
+        }
+        
+        // Écouteurs d'événements pour les sliders
+        if (amountSlider && durationSlider) {
+            amountSlider.addEventListener('input', updateCalculations);
+            durationSlider.addEventListener('input', updateCalculations);
+            
+            // Initialisation des calculs au chargement
+            updateCalculations();
+            
+            // Ajout d'un écouteur pour le bouton d'investissement
+            const investButton = document.getElementById('investNowBtn');
+            if (investButton) {
+                investButton.addEventListener('click', function() {
+                    alert('Votre demande d\'investissement a été enregistrée. Un conseiller vous contactera sous peu.');
+                });
+            }
+        }
+    });
+    </script>
+    
+    <!-- Icônes Font Awesome (si nécessaire) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </section>
+                
+                <!-- Investment FAQ -->
+                <section id="faq-section" class="nf-faq-section">
+                    <div class="nf-container">
+                        <h2 class="nf-section-title">Questions fréquentes</h2>
+                        
+                        <div class="nf-faq-container">
+                            <div class="nf-faq-item">
+                                <button class="nf-faq-question">
+                                    <div class="nf-question-content">
+                                        <span>Comment sont calculés les intérêts?</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </button>
+                                <div class="nf-faq-answer">
+                                    <p>Les intérêts sont calculés mensuellement sur le capital initial investi, selon un taux variable déterminé en fonction de la durée de l’investissement. Pour une estimation personnalisée, vous pouvez effectuer des simulations à l’aide du calculateur mis à disposition ci-dessus.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="nf-faq-item">
+                                <button class="nf-faq-question">
+                                    <div class="nf-question-content">
+                                        <span>Puis-je retirer mon investissement avant la fin du contrat?</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </button>
+                                <div class="nf-faq-answer">
+                                    <p>En cas de demande de retrait anticipé des fonds avant l’échéance de la période d’investissement convenue, les intérêts déjà versés seront annulés. Une pénalité équivalente à 10 % du capital investi sera également appliquée, sauf si la durée de l’investissement excède 12 mois, auquel cas seule l’annulation des intérêts sera effectuée.
+                                        Le remboursement du capital net interviendra dans un délai de 30 à 45 jours à compter de la réception de la demande formelle de retrait.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="nf-faq-item">
+                                <button class="nf-faq-question">
+                                    <div class="nf-question-content">
+                                        <span>Quels sont les risques associés à cet investissement?</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </button>
+                                <div class="nf-faq-answer">
+                                    <p>Comme tout investissement, il existe des risques, notamment liés aux aléas climatiques ou sanitaires. Cependant, nous mettons en place plusieurs mesures de mitigation : assurance des troupeaux, diversification des activités, et constitution de réserves financières. Depuis notre création, nous avons toujours honoré nos engagements envers nos investisseurs.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="nf-faq-item">
+                                <button class="nf-faq-question">
+                                    <div class="nf-question-content">
+                                        <span>Comment puis-je suivre mon investissement?</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </button>
+                                <div class="nf-faq-answer">
+                                    <p>Chaque investisseur a accès à un espace membre sécurisé où il peut consulter :<br>
+                                    - Le solde de son investissement<br>
+                                    - Les intérêts cumulés<br>
+                                    - Des rapports trimestriels sur l'état de la ferme<br>
+                                    - Des photos et vidéos des animaux<br>
+                                    Vous recevrez également un rapport mensuel par email.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                <style>
+                /* Styles isolés pour la section FAQ avec espacement réduit */
+                .nf-faq-section {
+                    padding: 2rem 0; /* Réduit de 5rem à 2rem */
+                    background-color: #0f172a;
+                    color: #fff;
+                    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                    margin-top: -3rem; /* Ajoute une marge négative pour réduire l'espace */
+                }
+                
+                .nf-container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 0 1.5rem;
+                }
+                
+                .nf-section-title {
+                    font-size: 2rem;
+                    font-weight: 700;
+                    color: #fff;
+                    text-align: center;
+                    margin-bottom: 2rem; /* Réduit de 3rem à 2rem */
+                }
+                
+                .nf-faq-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                
+                .nf-faq-item {
+                    border: 1px solid #1e293b;
+                    border-radius: 0.5rem;
+                    overflow: hidden;
+                    transition: all 0.3s ease;
+                }
+                
+                .nf-faq-question {
+                    width: 100%;
+                    text-align: left;
+                    padding: 1.25rem;
+                    background-color: #0f172a;
+                    border: none;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+                }
+                
+                .nf-faq-question:hover {
+                    background-color: #1e293b;
+                }
+                
+                .nf-question-content {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                
+                .nf-question-content span {
+                    font-size: 1rem;
+                    font-weight: 500;
+                    color: #fff;
+                }
+                
+                .nf-question-content i {
+                    color: #94a3b8;
+                    font-size: 0.875rem;
+                    transition: transform 0.3s ease;
+                }
+                
+                .nf-faq-item.active .nf-question-content i {
+                    transform: rotate(180deg);
+                }
+                
+                .nf-faq-answer {
+                    padding: 0;
+                    max-height: 0;
+                    overflow: hidden;
+                    background-color: #1e293b;
+                    transition: all 0.3s ease;
+                }
+                
+                .nf-faq-item.active .nf-faq-answer {
+                    padding: 1.25rem;
+                    max-height: 500px;
+                }
+                
+                .nf-faq-answer p {
+                    color: #94a3b8;
+                    margin: 0;
+                    line-height: 1.6;
+                    font-size: 0.9375rem;
+                }
+                </style>
+                
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Sélectionner tous les boutons de question
+                    const faqQuestions = document.querySelectorAll('.nf-faq-question');
+                    
+                    // Ajouter un écouteur d'événement à chaque bouton
+                    faqQuestions.forEach(question => {
+                        question.addEventListener('click', function() {
+                            // Obtenir l'élément parent (nf-faq-item)
+                            const faqItem = this.parentElement;
+                            
+                            // Vérifier si l'élément est déjà actif
+                            const isActive = faqItem.classList.contains('active');
+                            
+                            // Fermer tous les autres éléments ouverts
+                            document.querySelectorAll('.nf-faq-item').forEach(item => {
+                                item.classList.remove('active');
+                            });
+                            
+                            // Si l'élément n'était pas actif, l'ouvrir
+                            if (!isActive) {
+                                faqItem.classList.add('active');
+                            }
+                        });
+                    });
+                });
+                </script>
+                
+                <!-- Icônes Font Awesome -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-darker">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="text-primary font-medium">Ce qu'ils disent de nous</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">Témoignages</h2>
+            </div>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card bg-dark border border-gray-800 rounded-xl overflow-hidden transition-all duration-300 hover:border-primary/30">
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="Client" class="w-12 h-12 rounded-full mr-4 border-2 border-primary">
+                                <div>
+                                    <h4 class="font-bold text-white">Aïssatou Diallo</h4>
+                                    <p class="text-gray-500 text-sm">Partenaire depuis 2020</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-400 mb-4">"Je suis partenaire de NOVA FAZENDA depuis deux ans avec 5 animaux. Les rendements sont réguliers et le service client est réactif. Je recommande vivement!"</p>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card bg-dark border border-gray-800 rounded-xl overflow-hidden transition-all duration-300 hover:border-primary/30">
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client" class="w-12 h-12 rounded-full mr-4 border-2 border-primary">
+                                <div>
+                                    <h4 class="font-bold text-white">Moussa Camara</h4>
+                                    <p class="text-gray-500 text-sm">Investisseur</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-400 mb-4">"J'ai investi 500 000 FCFA pour 18 mois. Le processus a été simple et transparent. J'ai déjà reçu mes intérêts comme prévu. Je prévois de réinvestir bientôt."</p>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card bg-dark border border-gray-800 rounded-xl overflow-hidden transition-all duration-300 hover:border-primary/30">
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Client" class="w-12 h-12 rounded-full mr-4 border-2 border-primary">
+                                <div>
+                                    <h4 class="font-bold text-white">Fatou Ndiaye</h4>
+                                    <p class="text-gray-500 text-sm">Partenaire depuis 2021</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-400 mb-4">"Ce qui m'a convaincue, c'est la transparence et la visite de la ferme. Voir les animaux bien traités m'a rassurée. Les rapports mensuels avec photos sont un vrai plus."</p>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-dark">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="text-primary font-medium">Restons en contact</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">Contactez-nous</h2>
+            </div>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-6">Informations de contact</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start bg-dark border border-gray-800 rounded-xl p-5 hover:border-primary/30 transition-colors">
+                                <div class="bg-primary/10 text-primary p-3 rounded-full mr-4">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-1">Adresse</h4>
+                                    <p class="text-gray-400">Rue 123, Quartier des Fermes<br>Bouaké, Côte d’Ivoire</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start bg-dark border border-gray-800 rounded-xl p-5 hover:border-primary/30 transition-colors">
+                                <div class="bg-primary/10 text-primary p-3 rounded-full mr-4">
+                                    <i class="fas fa-phone-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-1">Téléphone</h4>
+                                    <p class="text-gray-400">+225 07 09 64 02 90<br>Lundi - Vendredi, 9h - 17h</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start bg-dark border border-gray-800 rounded-xl p-5 hover:border-primary/30 transition-colors">
+                                <div class="bg-primary/10 text-primary p-3 rounded-full mr-4">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white mb-1">Email</h4>
+                                    <p class="text-gray-400">contact@novafazenda.ci<br>Réponse sous 24h</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h4 class="font-bold text-white mb-4">Suivez-nous</h4>
+                            <div class="flex space-x-4">
+                                <a href="#" class="bg-dark border border-gray-800 text-gray-400 hover:text-white hover:border-primary/50 hover:bg-primary/10 p-3 rounded-full transition-colors">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="bg-dark border border-gray-800 text-gray-400 hover:text-white hover:border-primary/50 hover:bg-primary/10 p-3 rounded-full transition-colors">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="bg-dark border border-gray-800 text-gray-400 hover:text-white hover:border-primary/50 hover:bg-primary/10 p-3 rounded-full transition-colors">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="#" class="bg-dark border border-gray-800 text-gray-400 hover:text-white hover:border-primary/50 hover:bg-primary/10 p-3 rounded-full transition-colors">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-glass rounded-xl p-8 border border-gray-800">
+                        <h3 class="text-2xl font-bold text-white mb-6">Envoyez-nous un message</h3>
+                        
+                        <form id="contactForm" class="space-y-6">
+                            <div>
+                                <label for="contactName" class="block text-gray-300 mb-2">Nom complet</label>
+                                <input type="text" id="contactName" name="contactName" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                            </div>
+                            
+                            <div>
+                                <label for="contactEmail" class="block text-gray-300 mb-2">Email</label>
+                                <input type="email" id="contactEmail" name="contactEmail" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                            </div>
+                            
+                            <div>
+                                <label for="contactSubject" class="block text-gray-300 mb-2">Sujet</label>
+                                <select id="contactSubject" name="contactSubject" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required>
+                                    <option value="">Sélectionner un sujet</option>
+                                    <option value="partnership">Partenariat</option>
+                                    <option value="investment">Investissement</option>
+                                    <option value="visit">Visite de la ferme</option>
+                                    <option value="other">Autre</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="contactMessage" class="block text-gray-300 mb-2">Message</label>
+                                <textarea id="contactMessage" name="contactMessage" rows="5" class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white" required></textarea>
+                            </div>
+                            
+                            <div>
+                                <button type="submit" class="w-full bg-primary hover:bg-secondary text-white px-6 py-3 rounded-lg font-medium transition-colors btn-glow">Envoyer le message</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-darker text-gray-400 pt-16 pb-8 border-t border-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <img src="image/logo.png" alt="NOVA FAZENDA Logo" class="h-10 w-10 mr-3 rounded-full border-2 border-primary">
+                        <h3 class="text-xl font-bold text-white">NOVA FAZENDA</h3>
+                    </div>
+                    <p class="mb-4">Pour une agriculture durable et un investissement responsable en Côte d’Ivoire.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-white mb-4">Liens rapides</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="hover:text-white transition-colors">Accueil</a></li>
+                        <li><a href="#partnership" class="hover:text-white transition-colors">Partenariat</a></li>
+                        <li><a href="#investment-calculator-section" class="hover:text-white transition-colors">Investissement</a></li>
+                        <li><a href="#testimonials" class="hover:text-white transition-colors">Témoignages</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-white mb-4">Légal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Conditions générales</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Politique de confidentialité</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Mentions légales</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-white mb-4">Contact</h4>
+                    <address class="not-italic">
+                        <p class="mb-2">Rue 123, Quartier des Fermes</p>
+                        <p class="mb-4">Bouaké, Côte d’Ivoire</p>
+                        <p class="mb-1"><i class="fas fa-envelope mr-2"></i> contact@novafazenda.ci</p>
+                        <p><i class="fas fa-phone-alt mr-2"></i> +225 07 09 64 02 90</p>
+                    </address>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="mb-4 md:mb-0">© 2026 NOVA FAZENDA. Tous droits réservés.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-white transition-colors">
+                        <i class="fab fa-cc-visa text-xl"></i>
+                    </a>
+                    <a href="#" class="hover:text-white transition-colors">
+                        <i class="fab fa-cc-mastercard text-xl"></i>
+                    </a>
+                    <a href="#" class="hover:text-white transition-colors">
+                        <i class="fab fa-cc-paypal text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-secondary">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Hero Slider
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const sliderDots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+        
+        function showSlide(index) {
+            heroSlides.forEach((slide, i) => {
+                slide.style.opacity = i === index ? '1' : '0';
+            });
+            
+            sliderDots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('bg-opacity-100');
+                    dot.classList.remove('bg-opacity-50');
+                } else {
+                    dot.classList.add('bg-opacity-50');
+                    dot.classList.remove('bg-opacity-100');
+                }
+            });
+            
+            currentSlide = index;
+        }
+        
+        sliderDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const slideIndex = parseInt(dot.getAttribute('data-slide'));
+                showSlide(slideIndex);
+            });
+        });
+        
+        // Auto-advance slides every 5 seconds
+        setInterval(() => {
+            const nextSlide = (currentSlide + 1) % heroSlides.length;
+            showSlide(nextSlide);
+        }, 5000);
+
+        // Partnership Form Toggle
+        const showPartnershipForm = document.getElementById('showPartnershipForm');
+        const partnershipForm = document.getElementById('partnershipForm');
+        
+        showPartnershipForm.addEventListener('click', () => {
+            partnershipForm.classList.toggle('hidden');
+            window.scrollTo({
+                top: partnershipForm.offsetTop - 100,
+                behavior: 'smooth'
+            });
+        });
+
+        // Form Validation
+        const partnershipFormElement = document.getElementById('partnershipFormElement');
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+        const fullNameInput = document.getElementById('fullName');
+        const fullNameError = document.getElementById('fullNameError');
+        const phoneInput = document.getElementById('phone');
+        const phoneError = document.getElementById('phoneError');
+        
+        emailInput.addEventListener('input', () => {
+            if (!emailInput.validity.valid) {
+                emailError.textContent = 'Veuillez entrer une adresse email valide';
+                emailError.classList.remove('hidden');
+            } else {
+                emailError.classList.add('hidden');
+            }
+        });
+        
+        fullNameInput.addEventListener('input', () => {
+            if (fullNameInput.value.length < 3) {
+                fullNameError.textContent = 'Le nom doit contenir au moins 3 caractères';
+                fullNameError.classList.remove('hidden');
+            } else {
+                fullNameError.classList.add('hidden');
+            }
+        });
+        
+        phoneInput.addEventListener('input', () => {
+            const phoneRegex = /^[0-9]{9,15}$/;
+            if (!phoneRegex.test(phoneInput.value)) {
+                phoneError.textContent = 'Veuillez entrer un numéro de téléphone valide';
+                phoneError.classList.remove('hidden');
+            } else {
+                phoneError.classList.add('hidden');
+            }
+        });
+        
+        partnershipFormElement.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Check if all fields are valid
+            let isValid = true;
+            
+            if (fullNameInput.value.length < 3) {
+                fullNameError.textContent = 'Le nom doit contenir au moins 3 caractères';
+                fullNameError.classList.remove('hidden');
+                isValid = false;
+            }
+            
+            if (!emailInput.validity.valid) {
+                emailError.textContent = 'Veuillez entrer une adresse email valide';
+                emailError.classList.remove('hidden');
+                isValid = false;
+            }
+            
+            const phoneRegex = /^[0-9]{9,15}$/;
+            if (!phoneRegex.test(phoneInput.value)) {
+                phoneError.textContent = 'Veuillez entrer un numéro de téléphone valide';
+                phoneError.classList.remove('hidden');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // In a real app, you would submit the form here
+                alert('Formulaire soumis avec succès! Nous vous contacterons bientôt.');
+                partnershipFormElement.reset();
+                partnershipForm.classList.add('hidden');
+            }
+        });
+
+        // Investment Calculator
+        const investmentAmount = document.getElementById('investmentAmount');
+        const investmentDuration = document.getElementById('investmentDuration');
+        const amountValue = document.getElementById('amountValue');
+        const durationValue = document.getElementById('durationValue');
+        const investedAmount = document.getElementById('investedAmount');
+        const displayDuration = document.getElementById('displayDuration');
+        const monthlyGain = document.getElementById('monthlyGain');
+        const totalGain = document.getElementById('totalGain');
+        const finalAmount = document.getElementById('finalAmount');
+        
+        function updateCalculator() {
+            const amount = parseInt(investmentAmount.value);
+            const duration = parseInt(investmentDuration.value);
+            const monthlyRate = 0.015; // 1.5% monthly
+            
+            const monthly = amount * monthlyRate;
+            const total = monthly * duration;
+            const final = amount + total;
+            
+            // Update displayed values
+            amountValue.textContent = amount.toLocaleString('fr-FR');
+            durationValue.textContent = duration;
+            
+            investedAmount.textContent = amount.toLocaleString('fr-FR') + ' FCFA';
+            displayDuration.textContent = duration + ' mois';
+            monthlyGain.textContent = monthly.toLocaleString('fr-FR') + ' FCFA';
+            totalGain.textContent = total.toLocaleString('fr-FR') + ' FCFA';
+            finalAmount.textContent = final.toLocaleString('fr-FR') + ' FCFA';
+        }
+        
+        investmentAmount.addEventListener('input', updateCalculator);
+        investmentDuration.addEventListener('input', updateCalculator);
+        
+        // Initialize calculator
+        updateCalculator();
+        
+        // Invest Now Button
+        const investNowBtn = document.getElementById('investNowBtn');
+        investNowBtn.addEventListener('click', () => {
+            alert('Vous allez être redirigé vers notre plateforme de paiement sécurisée.');
+            // In a real app, you would redirect to payment page
+        });
+
+        // FAQ Accordion
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('i');
+                
+                answer.classList.toggle('hidden');
+                icon.classList.toggle('transform');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+
+        // Contact Form
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Merci pour votre message! Nous vous répondrons dans les plus brefs délais.');
+            contactForm.reset();
+        });
+
+    
+
+        // Back to Top Button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Cookie Consent
+        const cookieConsent = document.getElementById('cookieConsent');
+        const acceptCookies = document.getElementById('acceptCookies');
+        
+        // Check if cookies are already accepted
+        if (!localStorage.getItem('cookiesAccepted')) {
+            setTimeout(() => {
+                cookieConsent.classList.remove('hidden');
+            }, 1000);
+        }
+        
+        acceptCookies.addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', 'true');
+            cookieConsent.classList.add('hidden');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

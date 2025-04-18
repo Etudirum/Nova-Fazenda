@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Membre - NovaPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        primary: '#16a34a',
+                        darker: '#020617',
+                        sidebar: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .sidebar-bg {
+            background-color: #1e293b;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(22, 163, 74, 0.1), 0 10px 10px -5px rgba(22, 163, 74, 0.04);
+        }
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #1e293b;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-completed {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        .status-pending {
+            background-color: rgba(234, 179, 8, 0.1);
+            color: #eab308;
+        }
+        .status-failed {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .status-processing {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        .investment-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .investment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0px;
+            background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
+        }
+        .quick-action-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.1), 0 4px 6px -2px rgba(22, 163, 74, 0.05);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .animal-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+        .sidebar {
+            width: 250px;
+            transition: all 0.3s ease;
+            transform: translateX(-100%);
+            z-index: 40;
+            font-size: 1rem;
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 257px;
+            }
+        }
+        .sidebar-link {
+            transition: all 0.2s ease;
+        }
+        .sidebar-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .sidebar-link.active {
+            background-color: rgba(22, 163, 74, 0.2);
+            border-left: 4px solid #16a34a;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            padding: 1.25rem;
+        }
+        .modal-footer {
+            padding: 1.25rem;
+            border-top: 1px solid #334155;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+        
+        /* Styles pour la personnalisation */
+        .customization-panel {
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background-color: #0f172a;
+            margin-bottom: 0.75rem;
+            cursor: move;
+        }
+        .action-item:hover {
+            background-color: #1e293b;
+        }
+        .action-item-handle {
+            margin-right: 0.75rem;
+            color: #64748b;
+            cursor: move;
+        }
+        /* Styles spécifiques pour le menu déroulant sur mobile */
+    @media (max-width: 767px) {
+        #filterDropdown {
+            width: calc(100vw - 40px) !important;
+            max-width: 200px;
+            left: 100px !important;
+            right: 20px !important;
+            top: auto !important;
+            bottom: 0px !important;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .filter-btn {
+            padding: 12px 16px !important;
+        }
+    }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar fixed inset-y-0 left-0 sidebar-bg shadow-xl">
+        <div class="h-full flex flex-col">
+            <div class="p-4 border-b border-gray-700 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-chart-line text-primary text-2xl mr-3"></i>
+                    <h1 class="text-xl font-bold">Nova<span class="text-primary">Pro</span></h1>
+                </div>
+                <button id="closeSidebar" class="md:hidden text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="flex-1 overflow-y-auto p-4">
+                <ul class="space-y-1">
+                    <li>
+                        <button onclick="switchTab('dashboard')" class="w-full text-left py-3 px-4 rounded-lg flex items-center sidebar-link active">
+                            <i class="fas fa-tachometer-alt mr-3"></i> Tableau de bord
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchTab('transactions')" class="w-full text-left py-3 px-4 rounded-lg flex items-center sidebar-link">
+                            <i class="fas fa-exchange-alt mr-3"></i> Transactions
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchTab('investments')" class="w-full text-left py-3 px-4 rounded-lg flex items-center sidebar-link">
+                            <i class="fas fa-chart-pie mr-3"></i> Investissements
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchTab('cattle')" class="w-full text-left py-3 px-4 rounded-lg flex items-center sidebar-link">
+                            <i class="fas fa-cow mr-3"></i> Mes Boeufs
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchTab('history')" class="w-full text-left py-3 px-4 rounded-lg flex items-center sidebar-link">
+                            <i class="fas fa-history mr-3"></i> Historique
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="p-4 border-t border-gray-700">
+                <div class="text-xs text-gray-400">
+                    <p>© 2026 NovaPro</p>
+                    <p class="mt-1">Version 1.0.0</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content min-h-screen">
+        <!-- Header -->
+        <header class="bg-slate-800 border-b border-gray-700">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="mobileMenuButton" class="mr-4 text-gray-400 hover:text-white md:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 id="currentTabTitle" class="text-lg font-semibold">Tableau de bord</h2>
+                </div>
+                
+                <div class="flex items-center space-x-4 relative">
+                    <div class="hidden md:block text-right">
+                        <p class="text-sm text-gray-400">Bienvenue</p>
+                        <p class="font-medium">Bamba Lamine</p>
+                    </div>
+                    <div id="userProfileIcon" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center cursor-pointer">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div id="profileDropdown" class="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden">
+                        </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <main class="container mx-auto px-4 py-6">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active animate-fadeIn">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+                <!-- Compte Principal -->
+                    <div class="bg-slate-800 rounded-xl p-5 md:p-6 card-hover">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-gray-400 text-sm">Compte Principal</h3>
+                                <p class="text-2xl font-bold mt-1">5 722 725 FCFA</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-wallet text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-sm mb-6">
+                            <div>
+                                <p class="text-gray-400">Dernière transaction</p>
+                                <p>+787 800 FCFA</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-gray-400">Date</p>
+                                <p>15/06/2023</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="openModal('depositModal')" class="bg-primary hover:bg-green-700 text-white py-2 px-4 rounded-lg flex-1 text-center transition flex items-center justify-center">
+                                <i class="fas fa-plus mr-2"></i> Ajouter
+                            </button>
+                            <button onclick="openModal('withdrawModal')" class="border border-primary text-primary hover:bg-primary hover:text-white py-2 px-4 rounded-lg flex-1 text-center transition flex items-center justify-center">
+                                <i class="fas fa-minus mr-2"></i> Retirer
+                            </button>
+                        </div>
+                    </div>    
+                    
+                    <!-- Compte Bloqué -->
+                    <div class="bg-slate-800 rounded-xl p-5 md:p-6 card-hover">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-gray-400 text-sm">Compte Bloqué</h3>
+                                <p class="text-2xl font-bold mt-1">2 444 550 FCFA</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-lock text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Progression</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-sm mb-6">
+                            <div>
+                                <p class="text-gray-400">Taux d'intérêt</p>
+                                <p class="text-primary font-medium">3.5% mensuel</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-gray-400">Date de libération</p>
+                                <p>15/12/2023</p>
+                            </div>
+                        </div>
+                        <button onclick="openModal('investmentModal')" class="bg-primary hover:bg-green-700 text-white py-2 px-4 rounded-lg w-full text-center transition flex items-center justify-center">
+                            <i class="fas fa-lock-open mr-2"></i> Nouveau placement
+                        </button>
+                    </div>
+                    
+                    <!-- Boeufs -->
+                    <div class="bg-slate-800 rounded-xl p-5 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-gray-400 text-sm">Mes Boeufs</h3>
+                                <p class="text-2xl font-bold mt-1">3</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-cow text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between text-sm">
+                            <div>
+                                <p class="text-gray-400">Frais mensuels</p>
+                                <p class="text-red-500 font-medium">-10 500 FCFA</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-gray-400">Prochain prélèvement</p>
+                                <p>01/07/2023</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                <!-- Investissements -->
+                    <div class="bg-slate-800 rounded-xl p-5 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-gray-400 text-sm">Investissements</h3>
+                                <p class="text-2xl font-bold mt-1">3</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-chart-pie text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Gains estimés</span>
+                                <span class="text-primary">1 860 428 FCFA</span>
+                            </div>
+                        </div>
+                    </div>    
+                </div>
+                
+                <!-- Recent Transactions -->
+                <div class="bg-slate-800 rounded-xl p-5 md:p-6 mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium">Dernières Transactions</h3>
+                        <button onclick="switchTab('transactions')" class="text-primary hover:text-green-400 text-sm font-medium">
+                            Voir toutes <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-700">
+                            <thead class="bg-slate-700">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Description</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Montant</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-slate-800 divide-y divide-gray-700">
+                                <!-- Transaction 1 -->
+                                <tr class="hover:bg-slate-750 transition">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">15/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Dépôt sur compte principal</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-green-500 font-medium">+787 800 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-completed">Complété</span>
+                                    </td>
+                                </tr>
+                                <!-- Transaction 2 -->
+                                <tr class="hover:bg-slate-750 transition">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">14/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Retrait vers Orange Money</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500 font-medium">-150 000 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-pending">En attente</span>
+                                    </td>
+                                </tr>
+                                <!-- Transaction 3 -->
+                                <tr class="hover:bg-slate-750 transition">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">10/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Intérêts compte bloqué</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-green-500 font-medium">+85 600 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-completed">Complété</span>
+                                    </td>
+                                </tr>
+                                <!-- Transaction 4 -->
+                                <tr class="hover:bg-slate-750 transition">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">08/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Transfert vers utilisateur</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500 font-medium">-50 000 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-failed">Échoué</span>
+                                    </td>
+                                </tr>
+                                <!-- Transaction 5 -->
+                                <tr class="hover:bg-slate-750 transition">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">05/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Retrait compte principal</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500 font-medium">-328 000 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-processing">En traitement</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions - Version améliorée -->
+                <section class="mt-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium">Actions Rapides</h3>
+                        <button onclick="openCustomizationModal()" class="text-primary hover:text-green-400 text-sm font-medium flex items-center">
+                            <span>Personnaliser</span>
+                            <i class="fas fa-sliders-h ml-2"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="quickActionsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
+                        <!-- Les boutons seront générés dynamiquement par JavaScript -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div id="transactions" class="tab-content animate-fadeIn">
+                <!-- Statistiques rapides -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-800 rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-gray-400">Dépôts ce mois</p>
+                                <p class="text-xl font-bold text-green-500">1 245 300 FCFA</p>
+                            </div>
+                            <div class="bg-green-500 bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-arrow-down text-green-500"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-400">
+                            <span>+18% vs mois dernier</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-gray-400">Retraits ce mois</p>
+                                <p class="text-xl font-bold text-red-500">528 000 FCFA</p>
+                            </div>
+                            <div class="bg-red-500 bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-arrow-up text-red-500"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-400">
+                            <span>3 transactions</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-gray-400">Solde net</p>
+                                <p class="text-xl font-bold">717 300 FCFA</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-wallet text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-400">
+                            <span>Évolution mensuelle</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- En-tête avec boutons de filtre -->
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-medium mb-1">Historique des Transactions</h3>
+                        <p class="text-sm text-gray-400">Suivi complet de toutes vos activités financières</p>
+                    </div>
+                    <div class="flex space-x-2 mt-3 md:mt-0">
+                        <!-- Conteneur du filtre amélioré pour mobile -->
+                        <div class="relative">
+                            <button id="filterDropdownButton" class="flex items-center text-xs bg-slate-700 hover:bg-slate-600 text-white py-2 px-3 rounded-full transition">
+                                <i class="fas fa-filter mr-2"></i> Filtres
+                                <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            </button>
+                            
+                            <!-- Menu déroulant repensé pour mobile -->
+                            <div id="filterDropdown" class="hidden absolute right-0 mt-1 w-56 bg-slate-800 rounded-md shadow-lg z-50 border border-gray-700 overflow-y-auto max-h-[80vh]">
+                                <div class="py-1">
+                                    <div class="md:hidden px-3 py-2 text-xs text-gray-400 border-b border-gray-700">
+                                        Filtres disponibles
+                                    </div>
+                                    <button class="filter-btn active w-full text-left px-4 py-2.5 text-sm text-white hover:bg-slate-700 flex items-center" data-filter="all">
+                                        <i class="fas fa-list mr-3 w-4 text-center"></i> Toutes les transactions
+                                    </button>
+                                    
+                                    <div class="border-t border-gray-700 my-1"></div>
+                                    
+                                    <div class="px-3 py-1 text-xs text-gray-400">Par type</div>
+                                    <button class="filter-btn w-full text-left px-4 py-2.5 text-sm text-white hover:bg-slate-700 flex items-center" data-filter="deposit">
+                                        <i class="fas fa-arrow-down mr-3 w-4 text-center"></i> Dépôts
+                                    </button>
+                                    <button class="filter-btn w-full text-left px-4 py-2.5 text-sm text-white hover:bg-slate-700 flex items-center" data-filter="withdrawal">
+                                        <i class="fas fa-arrow-up mr-3 w-4 text-center"></i> Retraits
+                                    </button>
+                                    <button class="filter-btn w-full text-left px-4 py-2.5 text-sm text-white hover:bg-slate-700 flex items-center" data-filter="transfer">
+                                        <i class="fas fa-exchange-alt mr-3 w-4 text-center"></i> Transferts
+                                    </button>
+                                    
+                                    <div class="border-t border-gray-700 my-1"></div>
+                                    
+                                    <div class="px-3 py-1 text-xs text-gray-400">Par statut</div>
+                                    <button class="filter-btn w-full text-left px-4 py-2.5 text-sm text-white hover:bg-slate-700 flex items-center" data-filter="completed">
+                                        <i class="fas fa-check-circle mr-3 w-4 text-center"></i> Complétées
+                                    </button>
+                                    <button class="filter-btn w-full text-left px-4 py-2.5 text-sm text-white hover:bg-slate-700 flex items-center" data-filter="pending">
+                                        <i class="fas fa-clock mr-3 w-4 text-center"></i> En attente
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button id="exportBtn" class="text-xs bg-primary hover:bg-green-700 text-white py-2 px-3 rounded-full transition flex items-center">
+                            <i class="fas fa-file-export mr-2"></i> Exporter
+                        </button>
+                    </div>
+                </div>
+            
+                
+            
+                <!-- Tableau des transactions -->
+                <div class="bg-slate-800 rounded-xl overflow-hidden card-hover">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-700">
+                            <thead class="bg-slate-700">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Description</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Montant</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider hidden md:table-cell">Référence</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-slate-800 divide-y divide-gray-700" id="transactionsTable">
+                                <!-- Transaction 1 - Cliquable -->
+                                <tr class="hover:bg-slate-750 transition cursor-pointer" onclick="showTransactionDetail('TRX-78945')">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">15/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-900 text-green-100">
+                                            <i class="fas fa-arrow-down mr-1"></i> Dépôt
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Dépôt sur compte principal</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-green-500 font-medium">+787 800 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-completed">Complété</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-400 hidden md:table-cell">#TRX-78945</td>
+                                </tr>
+                                
+                                <!-- Transaction 2 - Cliquable -->
+                                <tr class="hover:bg-slate-750 transition cursor-pointer" onclick="showTransactionDetail('TRX-78944')">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">14/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-900 text-red-100">
+                                            <i class="fas fa-arrow-up mr-1"></i> Retrait
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Retrait vers Orange Money</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500 font-medium">-150 000 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-pending">En attente</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-400 hidden md:table-cell">#TRX-78944</td>
+                                </tr>
+                                
+                                <!-- Transaction 3 - Cliquable -->
+                                <tr class="hover:bg-slate-750 transition cursor-pointer" onclick="showTransactionDetail('TRX-78943')">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">10/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-900 text-green-100">
+                                            <i class="fas fa-coins mr-1"></i> Intérêts
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Intérêts compte bloqué</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-green-500 font-medium">+85 600 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-completed">Complété</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-400 hidden md:table-cell">#TRX-78943</td>
+                                </tr>
+                                
+                                <!-- Transaction 4 - Cliquable -->
+                                <tr class="hover:bg-slate-750 transition cursor-pointer" onclick="showTransactionDetail('TRX-78942')">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">08/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-900 text-blue-100">
+                                            <i class="fas fa-exchange-alt mr-1"></i> Transfert
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Transfert vers utilisateur</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500 font-medium">-50 000 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-failed">Échoué</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-400 hidden md:table-cell">#TRX-78942</td>
+                                </tr>
+                                
+                                <!-- Transaction 5 - Cliquable -->
+                                <tr class="hover:bg-slate-750 transition cursor-pointer" onclick="showTransactionDetail('TRX-78941')">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">05/06/2023</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-900 text-red-100">
+                                            <i class="fas fa-arrow-up mr-1"></i> Retrait
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Retrait compte principal</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-red-500 font-medium">-328 000 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-processing">En traitement</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-400 hidden md:table-cell">#TRX-78941</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            
+                <!-- Pagination -->
+                <div class="flex justify-between items-center mt-4">
+                    <div class="text-sm text-gray-400">
+                        Affichage <span id="startItem">1</span>-<span id="endItem">5</span> sur <span id="totalItems">23</span> transactions
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="prevPage" class="px-3 py-1 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button id="nextPage" class="px-3 py-1 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investments Tab -->
+            <div id="investments" class="tab-content animate-fadeIn">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-medium mb-1">Vos Investissements</h3>
+                        <p class="text-sm text-gray-400">Suivez et gérez vos placements financiers</p>
+                    </div>
+                    <div class="flex space-x-2 mt-3 md:mt-0">
+                        <div class="relative">
+                            <button id="filterDropdownButton" class="flex items-center text-xs bg-slate-700 hover:bg-slate-600 text-white py-2 px-3 rounded-full transition">
+                                <i class="fas fa-filter mr-2"></i> Filtrer
+                                <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            </button>
+                            <div id="filterDropdown" class="hidden absolute right-0 mt-1 w-48 bg-slate-800 rounded-md shadow-lg z-10 border border-gray-700">
+                                <div class="py-1">
+                                    <button class="filter-btn active w-full text-left px-4 py-2 text-sm text-white hover:bg-slate-700" data-filter="all">
+                                        <i class="fas fa-list mr-2"></i> Tous les investissements
+                                    </button>
+                                    <button class="filter-btn w-full text-left px-4 py-2 text-sm text-white hover:bg-slate-700" data-filter="active">
+                                        <i class="fas fa-spinner mr-2"></i> Actifs
+                                    </button>
+                                    <button class="filter-btn w-full text-left px-4 py-2 text-sm text-white hover:bg-slate-700" data-filter="completed">
+                                        <i class="fas fa-check-circle mr-2"></i> Terminés
+                                    </button>
+                                    <button class="filter-btn w-full text-left px-4 py-2 text-sm text-white hover:bg-slate-700" data-filter="high-yield">
+                                        <i class="fas fa-chart-line mr-2"></i> Haut rendement
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="openModal('newInvestmentModal')" class="text-xs bg-primary hover:bg-green-700 text-white py-2 px-3 rounded-full transition flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Nouveau
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Cartes de résumé -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-800 rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-gray-400">Capital investi</p>
+                                <p class="text-xl font-bold">4 944 100 FCFA</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-wallet text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 flex items-center text-sm text-gray-400">
+                            <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                            <span>+12% vs trimestre dernier</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-gray-400">Gains totaux</p>
+                                <p class="text-xl font-bold text-primary">1 860 428 FCFA</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-coins text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-400">
+                            <span>Dont 275 520 FCFA ce mois</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-gray-400">Projets actifs</p>
+                                <p class="text-xl font-bold">2</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-chart-pie text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-400">
+                            <span>1 projet termine ce mois</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Graphique de performance -->
+                <div class="bg-slate-800 rounded-xl p-5 md:p-6 mb-6 card-hover">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                        <div>
+                            <h4 class="font-medium">Performance de vos investissements</h4>
+                            <p class="text-sm text-gray-400">Évolution mensuelle de vos rendements</p>
+                        </div>
+                        <select class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg px-3 py-1 mt-2 md:mt-0">
+                            <option>12 derniers mois</option>
+                            <option>6 derniers mois</option>
+                            <option>3 derniers mois</option>
+                        </select>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="investmentChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Liste des investissements -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6" id="investmentsContainer">
+                    <!-- Investissement 1 - Avec nouvelles fonctionnalités -->
+                    <div class="bg-slate-800 rounded-xl p-5 md:p-6 investment-card card-hover" data-status="active" data-yield="medium">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="flex items-center mb-1">
+                                    <h4 class="font-medium mr-2">Plan Bronze</h4>
+                                    <span class="text-xs bg-yellow-500 bg-opacity-20 text-yellow-400 py-1 px-2 rounded-full">Actif</span>
+                                    <span class="text-xs bg-blue-500 bg-opacity-20 text-blue-400 py-1 px-2 rounded-full ml-2">
+                                        <i class="fas fa-clock mr-1"></i> 3 mois restants
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-400">Début: 15/03/2023</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-coins text-primary"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Progression <span class="text-gray-400">(65%)</span></span>
+                                <div class="flex items-center">
+                                    <span class="mr-2">Rendement: <span class="text-primary">3.5%</span></span>
+                                    <i class="fas fa-info-circle text-gray-400 cursor-pointer" title="Taux annualisé"></i>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-sm mb-5">
+                            <div>
+                                <p class="text-gray-400">Montant</p>
+                                <p class="font-medium">1 312 000 FCFA</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Durée</p>
+                                <p class="font-medium">6 mois</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Gain actuel</p>
+                                <p class="font-medium text-primary">179 020 FCFA</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Gain estimé</p>
+                                <p class="font-medium">275 520 FCFA</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">
+                                        2
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-check text-white text-2xs"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-400">Paiements reçus</p>
+                                    <p class="text-sm font-medium">Prochain: 15/08/2023</p>
+                                </div>
+                            </div>
+                            <button onclick="openInvestmentDetail('bronze')" class="text-primary hover:text-green-400 text-sm font-medium flex items-center">
+                                Détails <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Investissement 2 - Amélioré -->
+                    <div class="bg-slate-800 rounded-xl p-5 md:p-6 investment-card card-hover" data-status="completed" data-yield="low">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="flex items-center mb-1">
+                                    <h4 class="font-medium mr-2">Plan Argent</h4>
+                                    <span class="text-xs bg-gray-500 bg-opacity-20 text-gray-400 py-1 px-2 rounded-full">Terminé</span>
+                                    <span class="text-xs bg-green-500 bg-opacity-20 text-green-400 py-1 px-2 rounded-full ml-2">
+                                        <i class="fas fa-check mr-1"></i> Réussi
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-400">Terminé: 15/04/2023</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-medal text-primary"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Performance</span>
+                                <div class="flex items-center">
+                                    <span class="text-green-500">+2.5%</span>
+                                    <i class="fas fa-info-circle text-gray-400 ml-1 cursor-pointer" title="Rendement final"></i>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-green-500" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-sm mb-5">
+                            <div>
+                                <p class="text-gray-400">Capital</p>
+                                <p class="font-medium">1 132 100 FCFA</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Durée</p>
+                                <p class="font-medium">3 mois</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Gains totaux</p>
+                                <p class="font-medium text-green-500">84 908 FCFA</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">ROI</p>
+                                <p class="font-medium">7.5%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs mr-3">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-400">Tous les paiements</p>
+                                    <p class="text-sm font-medium">Complétés</p>
+                                </div>
+                            </div>
+                            <button onclick="openInvestmentDetail('argent')" class="text-primary hover:text-green-400 text-sm font-medium flex items-center">
+                                Rapport <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Investissement 3 - Amélioré -->
+                    <div class="bg-slate-800 rounded-xl p-5 md:p-6 investment-card card-hover" data-status="active" data-yield="high">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="flex items-center mb-1">
+                                    <h4 class="font-medium mr-2">Plan Or</h4>
+                                    <span class="text-xs bg-yellow-500 bg-opacity-20 text-yellow-400 py-1 px-2 rounded-full">Actif</span>
+                                    <span class="text-xs bg-purple-500 bg-opacity-20 text-purple-400 py-1 px-2 rounded-full ml-2">
+                                        <i class="fas fa-bolt mr-1"></i> Haut rendement
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-400">Début: 01/06/2023</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-crown text-primary"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Progression <span class="text-gray-400">(25%)</span></span>
+                                <div class="flex items-center">
+                                    <span class="mr-2">Rendement: <span class="text-primary">5.0%</span></span>
+                                    <i class="fas fa-info-circle text-gray-400 cursor-pointer" title="Taux annualisé"></i>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-sm mb-5">
+                            <div>
+                                <p class="text-gray-400">Montant</p>
+                                <p class="font-medium">2 500 000 FCFA</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Durée</p>
+                                <p class="font-medium">12 mois</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Gain actuel</p>
+                                <p class="font-medium text-primary">312 500 FCFA</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Gain estimé</p>
+                                <p class="font-medium">1 500 000 FCFA</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">
+                                        1
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-check text-white text-2xs"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-400">Paiements reçus</p>
+                                    <p class="text-sm font-medium">Prochain: 01/09/2023</p>
+                                </div>
+                            </div>
+                            <div>
+                                <button onclick="openInvestmentDetail('or')" class="text-primary hover:text-green-400 text-sm font-medium flex items-center mr-3">
+                                    Détails
+                                </button>
+                                <button onclick="showInvestmentTimeline('or')" class="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center">
+                                    <i class="fas fa-project-diagram mr-1"></i> Timeline
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nouvel Investissement CTA - Amélioré -->
+                    <div class="bg-slate-800 rounded-xl p-5 md:p-6 border-2 border-dashed border-gray-600 flex flex-col items-center justify-center card-hover hover:border-primary transition-colors">
+                        <div class="bg-primary bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                            <i class="fas fa-plus text-primary text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium mb-2 text-center">Démarrer un nouvel investissement</h4>
+                        <p class="text-sm text-gray-400 text-center mb-4">Choisissez parmi nos plans premium pour maximiser vos rendements</p>
+                        <button onclick="openModal('newInvestmentModal')" class="bg-primary hover:bg-green-700 text-white py-2 px-6 rounded-lg text-center transition w-full md:w-auto">
+                            Explorer les options
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cattle Tab -->
+            <div id="cattle" class="tab-content animate-fadeIn">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+                    <h3 class="text-lg font-medium mb-2 md:mb-0">Mes Boeufs</h3>
+                    <div class="text-sm bg-slate-800 py-2 px-4 rounded-lg">
+                        <span class="text-gray-400">Total:</span>
+                        <span class="font-bold ml-2">3 Boeufs</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    <!-- Boeuf 1 -->
+                    <div class="bg-slate-800 rounded-lg overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1545468800-85cc9bc6ecf7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Boeuf B007" class="animal-image">
+                        <div class="p-4 md:p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-medium">B007</h4>
+                                    <p class="text-sm text-gray-400">Race: N'Dama</p>
+                                </div>
+                                <span class="text-xs bg-green-500 bg-opacity-20 text-green-400 py-1 px-2 rounded-full">Actif</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                                <div>
+                                    <p class="text-gray-400">Poids</p>
+                                    <p class="font-medium">320 kg</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Âge</p>
+                                    <p class="font-medium">2 ans</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Date d'ajout</p>
+                                    <p class="font-medium">15/03/2023</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Frais mensuels</p>
+                                    <p class="font-medium text-red-500">-3 500 FCFA</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs text-gray-400">Prochain prélèvement</p>
+                                    <p class="text-sm font-medium">01/07/2023</p>
+                                </div>
+                                <button class="text-primary hover:text-green-400 text-sm font-medium flex items-center">
+                                    Détails <i class="fas fa-chevron-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Boeuf 2 -->
+                    <div class="bg-slate-800 rounded-lg overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Boeuf B015" class="animal-image">
+                        <div class="p-4 md:p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-medium">B015</h4>
+                                    <p class="text-sm text-gray-400">Race: Zebu</p>
+                                </div>
+                                <span class="text-xs bg-green-500 bg-opacity-20 text-green-400 py-1 px-2 rounded-full">Actif</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                                <div>
+                                    <p class="text-gray-400">Poids</p>
+                                    <p class="font-medium">280 kg</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Âge</p>
+                                    <p class="font-medium">18 mois</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Date d'ajout</p>
+                                    <p class="font-medium">10/04/2023</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Frais mensuels</p>
+                                    <p class="font-medium text-red-500">-3 500 FCFA</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs text-gray-400">Prochain prélèvement</p>
+                                    <p class="text-sm font-medium">01/07/2023</p>
+                                </div>
+                                <button class="text-primary hover:text-green-400 text-sm font-medium flex items-center">
+                                    Détails <i class="fas fa-chevron-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Boeuf 3 -->
+                    <div class="bg-slate-800 rounded-lg overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Boeuf B032" class="animal-image">
+                        <div class="p-4 md:p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-medium">B032</h4>
+                                    <p class="text-sm text-gray-400">Race: Baoulé</p>
+                                </div>
+                                <span class="text-xs bg-yellow-500 bg-opacity-20 text-yellow-400 py-1 px-2 rounded-full">En attente</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                                <div>
+                                    <p class="text-gray-400">Poids</p>
+                                    <p class="font-medium">250 kg</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Âge</p>
+                                    <p class="font-medium">15 mois</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Date d'ajout</p>
+                                    <p class="font-medium">01/06/2023</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400">Frais mensuels</p>
+                                    <p class="font-medium text-red-500">-3 500 FCFA</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs text-gray-400">Prochain prélèvement</p>
+                                    <p class="text-sm font-medium">01/07/2023</p>
+                                </div>
+                                <button class="text-primary hover:text-green-400 text-sm font-medium flex items-center">
+                                    Détails <i class="fas fa-chevron-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Information sur l'élevage -->
+                    <div class="bg-slate-800 rounded-xl p-5 md:p-6 border-2 border-primary border-opacity-30 flex flex-col card-hover md:col-span-2 lg:col-span-1">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg mr-3">
+                                <i class="fas fa-info-circle text-primary"></i>
+                            </div>
+                            <h4 class="font-medium">Informations sur l'élevage</h4>
+                        </div>
+                        
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-primary mt-1 mr-2"></i>
+                                <p>Nous prenons soin de vos animaux avec une alimentation de qualité et des soins vétérinaires réguliers.</p>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-primary mt-1 mr-2"></i>
+                                <p>Chaque boeuf vous coûte 3 500 FCFA par mois, prélevés automatiquement le 1er de chaque mois.</p>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-primary mt-1 mr-2"></i>
+                                <p>Vous pouvez récupérer votre animal à tout moment après avoir payé les frais de garde.</p>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-primary mt-1 mr-2"></i>
+                                <p>Pour ajouter un nouveau boeuf, veuillez contacter notre service client.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 bg-slate-700 p-3 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs text-gray-400">Total mensuel</p>
+                                    <p class="text-lg font-bold text-red-500">-10 500 FCFA</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs text-gray-400">Prochain prélèvement</p>
+                                    <p class="text-sm font-medium">01/07/2023</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history" class="tab-content animate-fadeIn">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-slate-800 rounded-xl p-5 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-gray-400 text-sm">Gains Totaux</h3>
+                                <p class="text-2xl font-bold text-primary">816 428 FCFA</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-coins text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center">
+                            <span class="text-green-500 text-sm mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
+                            <span class="text-gray-400 text-sm">vs année dernière</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-xl p-5 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-gray-400 text-sm">Moyenne Mensuelle</h3>
+                                <p class="text-2xl font-bold text-primary">68 035 FCFA</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-chart-bar text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="text-gray-400 text-sm mb-1">Meilleur mois: <span class="text-white">Déc (142 800 FCFA)</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-xl p-5 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-gray-400 text-sm">Prochain Paiement</h3>
+                                <p class="text-2xl font-bold text-primary">~72 500 FCFA</p>
+                            </div>
+                            <div class="bg-primary bg-opacity-20 p-2 rounded-lg">
+                                <i class="fas fa-calendar-check text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-gray-400 text-sm">
+                            Estimation basée sur 3 projets actifs
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="bg-slate-800 rounded-xl p-5 md:p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-lg font-medium">Évolution des Gains</h3>
+                            <p class="text-sm text-gray-400">Visualisez vos performances mensuelles</p>
+                        </div>
+                        <div class="flex space-x-2 mt-3 md:mt-0">
+                            <select id="yearSelect" class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg px-4 py-2 focus:ring-primary focus:border-primary">
+                                <option>2026</option>
+                                <option selected>2025</option>
+                                <option>2024</option>
+                            </select>
+                            <select id="chartType" class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg px-4 py-2 focus:ring-primary focus:border-primary">
+                                <option value="bar">Vue Barres</option>
+                                <option value="line">Vue Lignes</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="h-80 relative">
+                        <!-- Graphique principal -->
+                        <div id="mainChart" class="h-full w-full">
+                            <div class="flex items-end h-full space-x-1 md:space-x-2">
+                                <!-- Les barres seront générées dynamiquement par JavaScript -->
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-400 mt-2">
+                                <span class="w-1/12 text-center">Jan</span>
+                                <span class="w-1/12 text-center">Fév</span>
+                                <span class="w-1/12 text-center">Mar</span>
+                                <span class="w-1/12 text-center">Avr</span>
+                                <span class="w-1/12 text-center">Mai</span>
+                                <span class="w-1/12 text-center">Juin</span>
+                                <span class="w-1/12 text-center">Juil</span>
+                                <span class="w-1/12 text-center">Aout</span>
+                                <span class="w-1/12 text-center">Sep</span>
+                                <span class="w-1/12 text-center">Oct</span>
+                                <span class="w-1/12 text-center">Nov</span>
+                                <span class="w-1/12 text-center">Dec</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Graphique de comparaison (apparaît au survol) -->
+                        <div id="comparisonChart" class="absolute inset-0 bg-slate-800 bg-opacity-100 hidden flex-col justify-center p-4">
+                            <button onclick="hideComparison()" class="absolute top-3 right-3 text-gray-400 hover:text-white">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <h4 class="text-center font-medium mb-4" id="comparisonTitle">Comparaison avec 2024</h4>
+                            <div class="flex-1 flex items-end space-x-2">
+                                <div class="flex-1 bg-primary bg-opacity-100 rounded-t" style="height: 60%"></div>
+                                <div class="flex-1 bg-gray-500 rounded-t" style="height: 40%"></div>
+                            </div>
+                            <div class="flex justify-center space-x-6 mt-4">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-primary rounded-full mr-2"></div>
+                                    <span class="text-sm" id="currentYearLabel">2025</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-gray-500 rounded-full mr-2"></div>
+                                    <span class="text-sm" id="compareYearLabel">2024</span>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4 text-sm" id="comparisonResult">
+                                <span class="text-green-500">+18%</span> par rapport à l'année précédente
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mt-10">
+                        <button onclick="showComparison()" class="text-primary hover:text-green-400 text-sm font-medium flex items-center">
+                            <i class="fas fa-chart-line mr-2"></i> Comparer avec l'année précédente
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="bg-slate-800 rounded-xl p-5 md:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium">Détails des Transactions</h3>
+                        <div class="flex space-x-2">
+                            <button id="exportBtn" class="px-3 py-1 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 text-sm flex items-center">
+                                <i class="fas fa-file-export mr-2"></i> Exporter
+                            </button>
+                            <select id="transactionFilter" class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg px-3 py-1 focus:ring-primary focus:border-primary">
+                                <option value="all">Toutes</option>
+                                <option value="investment">Investissements</option>
+                                <option value="cattle">Bétail</option>
+                                <option value="other">Autres</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-700">
+                            <thead class="bg-slate-700">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Description</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Montant</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-slate-800 divide-y divide-gray-700" id="transactionTable">
+                                <!-- Exemple de ligne -->
+                                <tr class="hover:bg-slate-750 transition">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">15/06/2025</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-900 text-blue-100">
+                                            <i class="fas fa-chart-pie mr-1"></i> Investissement
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">Retour sur investissement - Projet Agricole</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-green-500 font-medium">+87 800 FCFA</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span class="status-badge status-completed">Complété</span>
+                                    </td>
+                                </tr>
+                                <!-- Plus de lignes seront générées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-4">
+                        <div class="text-sm text-gray-400">
+                            Affichage <span id="startItem">1</span>-<span id="endItem">5</span> sur <span id="totalItems">23</span> transactions
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevPage" class="px-3 py-1 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button id="nextPage" class="px-3 py-1 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Modals -->
+     <!-- Modal de détail de transaction -->
+<div id="transactionDetailModal" class="modal-overlay">
+    <div class="modal-content max-w-md">
+        <div class="modal-header">
+            <h3 class="text-lg font-medium" id="transactionModalTitle">Détails de la transaction</h3>
+            <button onclick="closeModal('transactionDetailModal')" class="text-gray-400 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="transactionModalContent">
+                <!-- Contenu chargé dynamiquement -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="closeModal('transactionDetailModal')" class="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
+                Fermer
+            </button>
+            <button onclick="generateReceipt()" class="px-4 py-2 rounded-lg bg-primary hover:bg-green-600 text-white flex items-center">
+                <i class="fas fa-file-pdf mr-2"></i> Générer un reçu
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Template caché pour le reçu PDF -->
+<div id="receiptTemplate" class="hidden">
+    <div class="p-6 bg-white text-gray-800" style="width: 800px;">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl font-bold">Nova<span class="text-primary">Pro</span></h1>
+                <p class="text-gray-600">Votre partenaire financier de confiance</p>
+            </div>
+            <div class="text-right">
+                <h2 class="text-xl font-bold">REÇU DE TRANSACTION</h2>
+                <p class="text-gray-600" id="receiptDate">15 juin 2023</p>
+            </div>
+        </div>
+        
+        <div class="flex justify-between mb-8">
+            <div>
+                <h3 class="font-bold mb-2">Informations client</h3>
+                <p id="receiptCustomerName">Bamba Lamine</p>
+                <p id="receiptCustomerId">ID: USR-789456</p>
+            </div>
+            <div class="text-right">
+                <h3 class="font-bold mb-2">Détails transaction</h3>
+                <p id="receiptTransactionId">Référence: #TRX-78945</p>
+                <p id="receiptTransactionType">Type: Dépôt</p>
+            </div>
+        </div>
+        
+        <div class="border-t-2 border-b-2 border-gray-200 py-4 my-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h4 class="font-bold" id="receiptDescription">Dépôt sur compte principal</h4>
+                    <p class="text-gray-600" id="receiptDetails">Via virement bancaire</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-600">Montant</p>
+                    <p class="text-2xl font-bold" id="receiptAmount">+787 800 FCFA</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div>
+                <h4 class="font-bold mb-2">Statut</h4>
+                <p class="px-3 py-1 rounded-full inline-block" id="receiptStatus">Complété</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Date</h4>
+                <p id="receiptFullDate">15 juin 2023 à 14:30</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Compte source</h4>
+                <p id="receiptSource">BANK-789456</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Compte destinataire</h4>
+                <p id="receiptDestination">Principal (NovaPro)</p>
+            </div>
+        </div>
+        
+        <div class="border-t border-gray-200 pt-4">
+            <h4 class="font-bold mb-2">Notes</h4>
+            <p class="text-gray-600">Merci pour votre confiance. Ce reçu sert de justificatif officiel pour cette transaction.</p>
+        </div>
+        
+        <div class="mt-8 flex justify-between items-center">
+            <div class="text-center">
+                <div class="h-16 w-32 border-b border-gray-300 mx-auto"></div>
+                <p class="text-gray-600 mt-2">Signature client</p>
+            </div>
+            <div class="text-center">
+                <div class="h-16 w-32 border-b border-gray-300 mx-auto"></div>
+                <p class="text-gray-600 mt-2">Signature NovaPro</p>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center text-xs text-gray-500">
+            <p>NovaPro - Siège social: Dakar, Sénégal</p>
+            <p>Contact: contact@novapro.sn - (+221) 33 123 45 67</p>
+        </div>
+    </div>
+</div>
+     <!-- Modal de personnalisation -->
+    <div id="customizationModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-lg font-medium">Personnaliser les actions rapides</h3>
+                <button onclick="closeCustomizationModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-sm text-gray-400 mb-4">Glissez-déposez pour réorganiser les actions. Décochez pour masquer.</p>
+                <div id="customizationList" class="customization-panel">
+                    <!-- Les éléments seront générés dynamiquement par JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeCustomizationModal()" class="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
+                    Annuler
+                </button>
+                <button onclick="saveCustomization()" class="px-4 py-2 rounded-lg bg-primary hover:bg-green-600 text-white">
+                    Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals pour chaque action rapide -->
+    <!-- Modal Transfert -->
+    <div id="transferModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-lg font-medium">Effectuer un transfert</h3>
+                <button onclick="closeModal('transferModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Destinataire</label>
+                    <select class="w-full bg-slate-700 border border-gray-600 rounded-lg px-3 py-2 text-sm">
+                        <option>Sélectionnez un destinataire</option>
+                        <option>Moussa Diop</option>
+                        <option>Amina Sylla</option>
+                        <option>Papa Ndiaye</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Montant (FCFA)</label>
+                    <input type="number" class="w-full bg-slate-700 border border-gray-600 rounded-lg px-3 py-2 text-sm" placeholder="50000">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Motif (optionnel)</label>
+                    <input type="text" class="w-full bg-slate-700 border border-gray-600 rounded-lg px-3 py-2 text-sm" placeholder="Motif du transfert">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal('transferModal')" class="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
+                    Annuler
+                </button>
+                <button class="px-4 py-2 rounded-lg bg-primary hover:bg-green-600 text-white">
+                    Confirmer le transfert
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Recevoir -->
+    <div id="receiveModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-lg font-medium">Recevoir un paiement</h3>
+                <button onclick="closeModal('receiveModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-6">
+                    <div class="bg-white p-4 rounded-lg inline-block">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NovaPro-User-12345" alt="QR Code" class="w-40 h-40">
+                    </div>
+                    <p class="text-sm text-gray-400 mt-2">Scannez ce QR code pour recevoir un paiement</p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Montant spécifique (optionnel)</label>
+                    <input type="number" class="w-full bg-slate-700 border border-gray-600 rounded-lg px-3 py-2 text-sm" placeholder="Entrez un montant">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal('receiveModal')" class="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
+                    Fermer
+                </button>
+                <button class="px-4 py-2 rounded-lg bg-primary hover:bg-green-600 text-white">
+                    Partager le lien
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-xl p-5 md:p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Ajouter des fonds</h3>
+                <button onclick="closeModal('depositModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-400 text-sm mb-2">Montant (FCFA)</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">FCFA</span>
+                    <input type="number" class="bg-slate-700 border border-gray-600 text-white rounded-lg py-2 pl-16 pr-4 w-full focus:ring-primary focus:border-primary" placeholder="0">
+                </div>
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-400 text-sm mb-2">Méthode de paiement</label>
+                <select class="bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 w-full focus:ring-primary focus:border-primary">
+                    <option>Carte Bancaire</option>
+                    <option>Virement Bancaire</option>
+                    <option>Mobile Money</option>
+                    <option>Wave</option>
+                </select>
+            </div>
+            <button class="bg-primary hover:bg-green-700 text-white py-3 px-6 rounded-lg w-full transition">
+                Confirmer le dépôt
+            </button>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-xl p-5 md:p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Retirer des fonds</h3>
+                <button onclick="closeModal('withdrawModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-400 text-sm mb-2">Montant (FCFA)</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">FCFA</span>
+                    <input type="number" class="bg-slate-700 border border-gray-600 text-white rounded-lg py-2 pl-16 pr-4 w-full focus:ring-primary focus:border-primary" placeholder="0">
+                </div>
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-400 text-sm mb-2">Compte de destination</label>
+                <select class="bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 w-full focus:ring-primary focus:border-primary">
+                    <option>Compte Bancaire Principal</option>
+                    <option>Mobile Money</option>
+                    <option>Wave</option>
+                    <option>Autre Compte Bancaire</option>
+                </select>
+            </div>
+            <button class="bg-primary hover:bg-green-700 text-white py-3 px-6 rounded-lg w-full transition">
+                Confirmer le retrait
+            </button>
+        </div>
+    </div>
+
+    <!-- Investment Modal -->
+    <div id="investmentDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-xl p-5 md:p-6 w-full max-w-2xl mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold" id="investmentDetailModalTitle">Détails de l'investissement</h3>
+                <button onclick="closeModal('investmentDetailModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4" id="investmentDetailModalContent">
+                </div>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeModal('investmentDetailModal')" class="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700">
+                    Fermer
+                </button>
+                <button class="px-4 py-2 rounded-lg bg-primary hover:bg-green-600 text-white">
+                    <i class="fas fa-file-pdf mr-2"></i> Exporter en PDF
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="newInvestmentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-xl p-5 md:p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Nouvel Investissement</h3>
+                <button onclick="closeModal('newInvestmentModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-400 text-sm mb-2">Montant à investir (FCFA)</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">FCFA</span>
+                    <input type="number" class="bg-slate-700 border border-gray-600 text-white rounded-lg py-2 pl-16 pr-4 w-full focus:ring-primary focus:border-primary" placeholder="0">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-400 text-sm mb-2">Plan d'investissement</label>
+                <select class="bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 w-full focus:ring-primary focus:border-primary">
+                    <option>Bronze - 8% sur 6 mois</option>
+                    <option>Argent - 12% sur 12 mois</option>
+                    <option>Or - 15% sur 18 mois</option>
+                    <option>Diamand - 20% sur 24 mois</option>
+                </select>
+            </div>
+            <div class="mb-6 bg-slate-700 p-4 rounded-lg">
+                <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div>
+                        <p class="text-gray-400 text-sm">Gains estimés:</p>
+                        <p class="font-medium">82 000 FCFA</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Date de libération:</p>
+                        <p class="font-medium">15/12/2023</p>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">
+                    <p><i class="fas fa-info-circle mr-1"></i> Les fonds seront bloqués jusqu'à la date de libération</p>
+                </div>
+            </div>
+            <button class="bg-primary hover:bg-green-700 text-white py-3 px-6 rounded-lg w-full transition">
+                Confirmer l'investissement
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Données simulées pour le graphique (à remplacer par des données réelles)
+    const chartData = {
+        2026: [65000, 72000, 81000, 78000, 85000, 92000, 105000, 98000, 112000, 125000, 118000, 142000],
+        2025: [58000, 64000, 72000, 68000, 75000, 82000, 95000, 88000, 102000, 115000, 108000, 132000],
+        2024: [52000, 58000, 65000, 62000, 68000, 74000, 86000, 80000, 92000, 104000, 98000, 120000]
+    };
+
+    // Initialisation du graphique
+    function initChart() {
+        const year = document.getElementById('yearSelect').value;
+        const data = chartData[year];
+        const maxValue = Math.max(...data);
+        const chartContainer = document.querySelector('#mainChart .flex.items-end');
+        
+        chartContainer.innerHTML = '';
+        
+        data.forEach((value, index) => {
+            const height = (value / maxValue) * 100;
+            const bar = document.createElement('div');
+            bar.className = `flex-1 bg-primary rounded-t cursor-pointer transition-all duration-300 ${index === new Date().getMonth() ? 'bg-opacity-100' : 'bg-opacity-70'}`;
+            bar.style.height = `${height}%`;
+            bar.title = `${['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'][index]}: ${value.toLocaleString()} FCFA`;
+            bar.onclick = () => showMonthDetails(index, year);
+            chartContainer.appendChild(bar);
+        });
+    }
+
+    // Fonction pour afficher les détails d'un mois
+    function showMonthDetails(monthIndex, year) {
+        const monthNames = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+        alert(`Détails pour ${monthNames[monthIndex]} ${year}\nGains: ${chartData[year][monthIndex].toLocaleString()} FCFA`);
+    }
+
+    // Fonction pour afficher la comparaison
+    function showComparison() {
+        const currentYear = document.getElementById('yearSelect').value;
+        const prevYear = parseInt(currentYear) - 1;
+        
+        if (chartData[prevYear]) {
+            document.getElementById('comparisonTitle').textContent = `Comparaison avec ${prevYear}`;
+            document.getElementById('currentYearLabel').textContent = currentYear;
+            document.getElementById('compareYearLabel').textContent = prevYear;
+            
+            const currentValue = chartData[currentYear].reduce((a, b) => a + b, 0);
+            const prevValue = chartData[prevYear].reduce((a, b) => a + b, 0);
+            const diff = ((currentValue - prevValue) / prevValue * 100).toFixed(0);
+            
+            document.getElementById('comparisonResult').innerHTML = diff >= 0 
+                ? `<span class="text-green-500">+${diff}%</span> par rapport à l'année précédente` 
+                : `<span class="text-red-500">${diff}%</span> par rapport à l'année précédente`;
+            
+            document.getElementById('comparisonChart').classList.remove('hidden');
+            document.getElementById('comparisonChart').classList.add('flex');
+        } else {
+            alert(`Pas de données disponibles pour ${prevYear}`);
+        }
+    }
+
+    function hideComparison() {
+        document.getElementById('comparisonChart').classList.add('hidden');
+        document.getElementById('comparisonChart').classList.remove('flex');
+    }
+
+    // Gestion des événements
+    document.getElementById('yearSelect').addEventListener('change', initChart);
+    document.getElementById('chartType').addEventListener('change', function() {
+        // Ici vous pourriez implémenter le changement entre graphique en barres et en lignes
+        alert('Fonctionnalité à implémenter: Changement vers ' + this.value);
+    });
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+        initChart();
+        
+        // Ici vous pourriez ajouter la logique pour:
+        // - Filtrer les transactions
+        // - Gérer la pagination
+        // - Exporter les données
+    });
+        // Données des actions rapides
+        const quickActions = [
+            {
+                id: 'transfer',
+                title: 'Transfert',
+                description: 'Envoyer de l\'argent',
+                icon: 'exchange-alt',
+                visible: true,
+                modalId: 'transferModal'
+            },
+            {
+                id: 'receive',
+                title: 'Recevoir',
+                description: 'Scanner QR Code',
+                icon: 'qrcode',
+                visible: true,
+                modalId: 'receiveModal'
+            },
+            {
+                id: 'payment',
+                title: 'Paiement',
+                description: 'Payer factures',
+                icon: 'credit-card',
+                visible: true,
+                modalId: 'paymentModal'
+            },
+            {
+                id: 'invest',
+                title: 'Investir',
+                description: 'Nouveau projet',
+                icon: 'chart-line',
+                visible: true,
+                modalId: 'investModal'
+            },
+            {
+                id: 'lock',
+                title: 'Bloquer',
+                description: 'Épargne sécurisée',
+                icon: 'lock',
+                visible: true,
+                modalId: 'lockModal'
+            },
+            {
+                id: 'withdraw',
+                title: 'Retrait',
+                description: 'Vers mobile money',
+                icon: 'money-bill-wave',
+                visible: true,
+                modalId: 'withdrawModal'
+            },
+            {
+                id: 'bank',
+                title: 'Virement',
+                description: 'Vers compte bancaire',
+                icon: 'bank',
+                visible: true,
+                modalId: 'bankModal'
+            },
+            {
+                id: 'settings',
+                title: 'Paramètres',
+                description: 'Préférences',
+                icon: 'cog',
+                visible: true,
+                modalId: 'settingsModal'
+            },
+            {
+                id: 'newCattle',
+                title: 'Nouveau boeuf',
+                description: 'Ajouter un animal',
+                icon: 'plus-circle',
+                visible: true,
+                modalId: 'newCattleModal'
+            },
+            {
+                id: 'history',
+                title: 'Historique',
+                description: 'Voir activités',
+                icon: 'history',
+                visible: true,
+                modalId: 'historyModal'
+            },
+            {
+                id: 'support',
+                title: 'Support',
+                description: 'Contactez-nous',
+                icon: 'headset',
+                visible: true,
+                modalId: 'supportModal'
+            }
+        ];
+
+        // Fonction pour générer les boutons d'action rapide
+        function generateQuickActions() {
+            const grid = document.getElementById('quickActionsGrid');
+            grid.innerHTML = '';
+            
+            const visibleActions = quickActions.filter(action => action.visible);
+            
+            visibleActions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'quick-action-card bg-slate-800 hover:bg-slate-750 rounded-xl p-4 text-center relative overflow-hidden group';
+                button.innerHTML = `
+                    <div class="quick-action-icon bg-primary bg-opacity-20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-opacity-30">
+                        <i class="fas fa-${action.icon} text-primary text-xl"></i>
+                    </div>
+                    <p class="text-sm font-medium">${action.title}</p>
+                    <p class="text-xs text-gray-400 mt-1 hidden sm:block">${action.description}</p>
+                    <div class="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 rounded-xl transition-all duration-300 pointer-events-none"></div>
+                `;
+                button.onclick = () => openModal(action.modalId);
+                grid.appendChild(button);
+            });
+        }
+
+        // Fonction pour générer la liste de personnalisation
+        function generateCustomizationList() {
+            const list = document.getElementById('customizationList');
+            list.innerHTML = '';
+            
+            quickActions.forEach(action => {
+                const item = document.createElement('div');
+                item.className = 'action-item';
+                item.setAttribute('data-id', action.id);
+                item.innerHTML = `
+                    <span class="action-item-handle"><i class="fas fa-grip-vertical"></i></span>
+                    <div class="flex-grow">
+                        <div class="flex items-center">
+                            <div class="bg-primary bg-opacity-20 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-${action.icon} text-primary text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">${action.title}</p>
+                                <p class="text-xs text-gray-400">${action.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" ${action.visible ? 'checked' : ''}>
+                        <div class="relative w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                `;
+                
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', function() {
+                    const actionId = item.getAttribute('data-id');
+                    const actionIndex = quickActions.findIndex(a => a.id === actionId);
+                    quickActions[actionIndex].visible = this.checked;
+                });
+                
+                list.appendChild(item);
+            });
+            
+            // Activer le drag and drop
+            initDragAndDrop();
+        }
+
+        // Fonction pour initialiser le drag and drop
+        function initDragAndDrop() {
+            const list = document.getElementById('customizationList');
+            let draggedItem = null;
+            
+            // Événements pour les éléments
+            const items = list.querySelectorAll('.action-item');
+            items.forEach(item => {
+                item.setAttribute('draggable', 'true');
+                
+                item.addEventListener('dragstart', function() {
+                    draggedItem = this;
+                    setTimeout(() => {
+                        this.style.opacity = '0.5';
+                    }, 0);
+                });
+                
+                item.addEventListener('dragend', function() {
+                    setTimeout(() => {
+                        this.style.opacity = '1';
+                        draggedItem = null;
+                    }, 0);
+                });
+                
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    const boundingBox = this.getBoundingClientRect();
+                    const offset = boundingBox.y + boundingBox.height / 2;
+                    
+                    if (e.clientY < offset) {
+                        this.style.borderTop = '2px solid #16a34a';
+                        this.style.borderBottom = 'none';
+                    } else {
+                        this.style.borderBottom = '2px solid #16a34a';
+                        this.style.borderTop = 'none';
+                    }
+                });
+                
+                item.addEventListener('dragleave', function() {
+                    this.style.borderTop = 'none';
+                    this.style.borderBottom = 'none';
+                });
+                
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.style.borderTop = 'none';
+                    this.style.borderBottom = 'none';
+                    
+                    if (draggedItem !== this) {
+                        const boundingBox = this.getBoundingClientRect();
+                        const offset = boundingBox.y + boundingBox.height / 2;
+                        
+                        if (e.clientY < offset) {
+                            list.insertBefore(draggedItem, this);
+                        } else {
+                            list.insertBefore(draggedItem, this.nextSibling);
+                        }
+                    }
+                });
+            });
+        }
+
+        // Fonctions pour ouvrir/fermer les modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openCustomizationModal() {
+            generateCustomizationList();
+            document.getElementById('customizationModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCustomizationModal() {
+            document.getElementById('customizationModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fonction pour sauvegarder la personnalisation
+        function saveCustomization() {
+            const items = document.querySelectorAll('#customizationList .action-item');
+            const newOrder = [];
+            
+            items.forEach((item, index) => {
+                const actionId = item.getAttribute('data-id');
+                const actionIndex = quickActions.findIndex(a => a.id === actionId);
+                newOrder.push(actionIndex);
+            });
+            
+            // Réorganiser le tableau quickActions selon le nouvel ordre
+            const reorderedActions = newOrder.map(index => quickActions[index]);
+            
+            // Mettre à jour les états de visibilité
+            items.forEach(item => {
+                const actionId = item.getAttribute('data-id');
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                const actionIndex = quickActions.findIndex(a => a.id === actionId);
+                reorderedActions[actionIndex].visible = checkbox.checked;
+            });
+            
+            // Mettre à jour le tableau original
+            quickActions.length = 0;
+            quickActions.push(...reorderedActions);
+            
+            // Regénérer les boutons d'action rapide
+            generateQuickActions();
+            
+            // Fermer le modal
+            closeCustomizationModal();
+            
+            // Enregistrer dans le localStorage
+            localStorage.setItem('quickActionsConfig', JSON.stringify(quickActions));
+        }
+
+        // Charger la configuration depuis le localStorage
+        function loadConfiguration() {
+            const savedConfig = localStorage.getItem('quickActionsConfig');
+            if (savedConfig) {
+                const parsedConfig = JSON.parse(savedConfig);
+                quickActions.forEach((action, index) => {
+                    if (parsedConfig[index]) {
+                        action.visible = parsedConfig[index].visible;
+                    }
+                });
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConfiguration();
+            generateQuickActions();
+            
+            // [Le reste du code d'initialisation précédent]
+        });
+    // Tab titles for header
+    const tabTitles = {
+        'dashboard': 'Tableau de bord',
+        'transactions': 'Transactions',
+        'investments': 'Investissements',
+        'cattle': 'Mes Boeufs',
+        'history': 'Historique'
+    };
+
+    // Tab switching functionality
+    function switchTab(tabId) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Show selected tab content
+        const activeTab = document.getElementById(tabId);
+        activeTab.classList.add('active');
+        activeTab.classList.add('animate-fadeIn');
+
+        // Update header title
+        document.getElementById('currentTabTitle').textContent = tabTitles[tabId];
+
+        // Update sidebar active link
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('onclick').includes(tabId)) {
+                link.classList.add('active');
+            }
+        });
+
+        // Close sidebar on mobile
+        if (window.innerWidth < 768) {
+            document.querySelector('.sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        }
+
+        // Si on active l'onglet "investissements", afficher les actifs par défaut et styler le bouton
+        if (tabId === 'investments') {
+            filterInvestments('actif');
+            updateFilterButtonStyles('actif');
+        }
+    }
+
+    function filterInvestments(status) {
+        const investmentCards = document.querySelectorAll('#investments .investment-card');
+        investmentCards.forEach(card => {
+            const statusElement = card.querySelector('.items-center span');
+            let cardStatus = '';
+
+            if (statusElement) {
+                cardStatus = statusElement.textContent.trim().toLowerCase();
+            }
+
+            if (status === 'tous') {
+                card.style.display = 'block';
+            } else if (cardStatus === status) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        updateFilterButtonStyles(status);
+    }
+
+    function updateFilterButtonStyles(activeStatus) {
+        const filterButtons = document.querySelectorAll('#investments .space-x-2 button');
+        filterButtons.forEach(button => {
+            const buttonStatus = button.textContent.trim().toLowerCase();
+            button.classList.remove('bg-slate-700', 'text-white', 'border', 'border-gray-600', 'bg-transparent', 'text-gray-400');
+            if (buttonStatus === activeStatus) {
+                button.classList.add('bg-slate-700', 'text-white');
+            } else {
+                button.classList.add('bg-transparent', 'text-gray-400', 'border', 'border-gray-600');
+            }
+        });
+    }
+
+    // Mobile menu toggle
+    document.getElementById('mobileMenuButton').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.remove('hidden');
+    });
+
+    document.getElementById('closeSidebar').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.add('hidden');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.getElementById('sidebarOverlay').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.remove('open');
+        this.classList.add('hidden');
+    });
+
+    // **Fonctions pour ouvrir et fermer les modales**
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    // Initialize with dashboard tab active and add event listeners for investment filters and user profile icon
+    document.addEventListener('DOMContentLoaded', function() {
+        switchTab('dashboard');
+
+        const filterButtons = document.querySelectorAll('#investments .space-x-2 button');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const status = this.textContent.trim().toLowerCase();
+                filterInvestments(status);
+            });
+        });
+
+        // *** AJOUT DU CODE POUR L'ICÔNE DE PROFIL ICI ***
+        const userProfileIcon = document.getElementById('userProfileIcon');
+        if (userProfileIcon) {
+            userProfileIcon.addEventListener('click', function() {
+                // Ici, vous ajouterez la logique pour afficher les informations de profil
+                console.log('Icône de profil cliquée !');
+                // Exemple : Vous pourriez ouvrir une modale, afficher une section, etc.
+                // openModal('profileModal'); // Si vous avez une modale pour le profil
+                // document.getElementById('profileInfoSection').classList.remove('hidden'); // Si vous avez une section cachée
+            });
+        }
+        // *** FIN DE L'AJOUT ***
+        document.addEventListener('DOMContentLoaded', function() {
+        switchTab('dashboard'); // Ou l'onglet actif par défaut
+
+        // ... Vos autres écouteurs d'événements ...
+
+        // *** Gestion du clic sur "Paramètres" dans le menu déroulant ***
+        const goToSettingsLink = document.getElementById('goToSettings');
+        if (goToSettingsLink) {
+            goToSettingsLink.addEventListener('click', function(event) {
+                event.preventDefault(); // Empêcher le comportement par défaut du lien "#"
+
+                // Afficher la section des paramètres (si elle est initialement cachée)
+                const settingsTab = document.getElementById('settings');
+                if (settingsTab && !settingsTab.classList.contains('active')) {
+                    // Si vous avez une fonction pour changer d'onglet (comme switchTab), utilisez-la
+                    switchTab('settings');
+                }
+
+                // Fermer le menu déroulant après avoir cliqué
+                const profileDropdown = document.getElementById('profileDropdown');
+                if (profileDropdown) {
+                    profileDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // *** Gestion du menu déroulant de profil (inchangé) ***
+        const userProfileIcon = document.getElementById('userProfileIcon');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        if (userProfileIcon && profileDropdown) {
+            userProfileIcon.addEventListener('click', function(event) {
+                event.stopPropagation();
+                profileDropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!profileDropdown.contains(event.target) && event.target !== userProfileIcon) {
+                    profileDropdown.classList.add('hidden');
+                }
+            });
+        }
+    });
+    });
+    function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+}
+
+function openModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+}
+
+// Fonction pour afficher la modale de détails (à appeler dynamiquement)
+function showInvestmentDetails(data) {
+    document.getElementById('investmentDetailModalTitle').innerText = `Détails de l'investissement #${data.id}`; // Exemple
+    document.getElementById('investmentDetailModalContent').innerHTML = `
+        <p>Montant investi: ${data.amount} FCFA</p>
+        <p>Plan: ${data.plan}</p>
+        `;
+    openModal('investmentDetailModal');
+}
+
+// Fonction pour afficher la modale de nouvel investissement
+function showNewInvestmentModal() {
+    openModal('newInvestmentModal');
+}
+// Données simulées des transactions
+const transactionsData = {
+        'TRX-78945': {
+            type: 'deposit',
+            description: 'Dépôt sur compte principal',
+            amount: '+787 800 FCFA',
+            status: 'completed',
+            reference: '#TRX-78945',
+            date: '15/06/2023',
+            fullDate: '15 juin 2023 à 14:30',
+            method: 'Virement bancaire',
+            source: 'BANK-789456',
+            destination: 'Principal (NovaPro)',
+            fees: '0 FCFA',
+            notes: 'Dépôt initial pour investissement'
+        },
+        // ... autres transactions
+    };
+
+    // Filtrer les transactions
+    function filterTransactions(filter) {
+        const rows = document.querySelectorAll('#transactionsTable tr');
+        
+        rows.forEach(row => {
+            if (filter === 'all') {
+                row.style.display = '';
+            } else {
+                const type = row.querySelector('td:nth-child(2) span').textContent.toLowerCase();
+                const status = row.querySelector('.status-badge').textContent.toLowerCase();
+                
+                if ((filter === 'deposit' && type.includes('dépôt')) ||
+                    (filter === 'withdrawal' && type.includes('retrait')) ||
+                    (filter === 'transfer' && type.includes('transfert')) ||
+                    (filter === 'completed' && status.includes('complété')) ||
+                    (filter === 'pending' && (status.includes('attente') || status.includes('traitement')))) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+        
+        // Mettre à jour le bouton actif
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-filter') === filter) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Mettre à jour le texte du bouton de filtre
+        const activeFilterText = {
+            'all': 'Tous',
+            'deposit': 'Dépôts',
+            'withdrawal': 'Retraits',
+            'transfer': 'Transferts',
+            'completed': 'Complétées',
+            'pending': 'En attente'
+        };
+        
+        document.getElementById('filterDropdownButton').innerHTML = `
+            <i class="fas fa-filter mr-2"></i> ${activeFilterText[filter]}
+            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+        `;
+        
+        closeFilterDropdown();
+    }
+    
+    // Afficher les détails d'une transaction
+    function showTransactionDetail(transactionId) {
+        const transaction = transactionsData[transactionId];
+        
+        document.getElementById('transactionModalTitle').textContent = `Transaction ${transactionId}`;
+        document.getElementById('transactionModalContent').innerHTML = `
+            <div class="space-y-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Date:</span>
+                    <span class="font-medium">${transaction.fullDate}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Type:</span>
+                    <span class="font-medium">${transaction.type === 'deposit' ? 'Dépôt' : transaction.type === 'withdrawal' ? 'Retrait' : 'Transfert'}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Montant:</span>
+                    <span class="font-medium ${transaction.amount.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${transaction.amount}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Statut:</span>
+                    <span class="status-badge ${transaction.status === 'completed' ? 'status-completed' : 
+                                             transaction.status === 'pending' ? 'status-pending' : 
+                                             transaction.status === 'failed' ? 'status-failed' : 'status-processing'}">
+                        ${transaction.status === 'completed' ? 'Complété' : 
+                          transaction.status === 'pending' ? 'En attente' : 
+                          transaction.status === 'failed' ? 'Échoué' : 'En traitement'}
+                    </span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Référence:</span>
+                    <span class="font-medium">${transaction.reference}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Méthode:</span>
+                    <span class="font-medium">${transaction.method}</span>
+                </div>
+                ${transaction.source ? `
+                <div class="flex justify-between">
+                    <span class="text-gray-400">${transaction.type === 'deposit' ? 'Compte source' : 'Compte débiteur'}:</span>
+                    <span class="font-medium">${transaction.source}</span>
+                </div>` : ''}
+                ${transaction.destination ? `
+                <div class="flex justify-between">
+                    <span class="text-gray-400">${transaction.type === 'withdrawal' ? 'Compte destinataire' : 'Compte créditeur'}:</span>
+                    <span class="font-medium">${transaction.destination}</span>
+                </div>` : ''}
+                ${transaction.fees ? `
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Frais:</span>
+                    <span class="font-medium">${transaction.fees}</span>
+                </div>` : ''}
+                <div class="pt-4 mt-4 border-t border-gray-700">
+                    <h4 class="font-medium mb-2">Description</h4>
+                    <p class="text-gray-300">${transaction.description}</p>
+                </div>
+                ${transaction.notes ? `
+                <div class="pt-4 mt-4 border-t border-gray-700">
+                    <h4 class="font-medium mb-2">Notes</h4>
+                    <p class="text-gray-300">${transaction.notes}</p>
+                </div>` : ''}
+            </div>
+        `;
+        
+        openModal('transactionDetailModal');
+    }
+    
+    // Générer un reçu PDF
+    function generateReceipt() {
+        // Récupérer les données de la transaction
+        const transactionId = document.getElementById('transactionModalTitle').textContent.split(' ')[1];
+        const transaction = transactionsData[transactionId];
+        
+        // Mettre à jour le template du reçu
+        document.getElementById('receiptDate').textContent = new Date().toLocaleDateString('fr-FR', { 
+            year: 'numeric', month: 'long', day: 'numeric' 
+        });
+        document.getElementById('receiptCustomerName').textContent = 'Bamba Lamine';
+        document.getElementById('receiptCustomerId').textContent = 'ID: USR-789456';
+        document.getElementById('receiptTransactionId').textContent = `Référence: ${transaction.reference}`;
+        document.getElementById('receiptTransactionType').textContent = `Type: ${transaction.type === 'deposit' ? 'Dépôt' : transaction.type === 'withdrawal' ? 'Retrait' : 'Transfert'}`;
+        document.getElementById('receiptDescription').textContent = transaction.description;
+        document.getElementById('receiptDetails').textContent = transaction.method;
+        document.getElementById('receiptAmount').textContent = transaction.amount;
+        document.getElementById('receiptStatus').textContent = transaction.status === 'completed' ? 'Complété' : 
+                                                              transaction.status === 'pending' ? 'En attente' : 
+                                                              transaction.status === 'failed' ? 'Échoué' : 'En traitement';
+        document.getElementById('receiptStatus').className = `px-3 py-1 rounded-full inline-block ${
+            transaction.status === 'completed' ? 'bg-green-100 text-green-800' : 
+            transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+            transaction.status === 'failed' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+        }`;
+        document.getElementById('receiptFullDate').textContent = transaction.fullDate;
+        document.getElementById('receiptSource').textContent = transaction.source || 'N/A';
+        document.getElementById('receiptDestination').textContent = transaction.destination || 'N/A';
+        
+        // Options pour html2pdf
+        const opt = {
+            margin: 10,
+            filename: `Reçu_${transaction.reference}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        
+        // Générer le PDF
+        const element = document.getElementById('receiptTemplate');
+        html2pdf().set(opt).from(element).save();
+    }
+    
+    // Gestion du dropdown de filtre
+    function toggleFilterDropdown() {
+        document.getElementById('filterDropdown').classList.toggle('hidden');
+    }
+    
+    function closeFilterDropdown() {
+        document.getElementById('filterDropdown').classList.add('hidden');
+    }
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des filtres
+        document.getElementById('filterDropdownButton').addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleFilterDropdown();
+        });
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterTransactions(this.getAttribute('data-filter'));
+            });
+        });
+        
+        // Fermer le dropdown quand on clique ailleurs
+        document.addEventListener('click', closeFilterDropdown);
+        
+        // Exporter les transactions
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            // Ici vous pourriez implémenter l'export des données filtrées
+            alert('Export des transactions en cours de développement');
+        });
+        
+        // Pagination
+        document.getElementById('nextPage').addEventListener('click', function() {
+            // Implémenter la pagination
+            alert('Pagination en cours de développement');
+        });
+        
+        document.getElementById('prevPage').addEventListener('click', function() {
+            // Implémenter la pagination
+            alert('Pagination en cours de développement');
+        });
+    });
+</script>
+<!-- Bibliothèque pour générer des PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</script>
+</body>
+</html>

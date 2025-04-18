@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NovaPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        primary: '#16a34a',
+                    },
+                    screens: {
+                        'xs': '475px',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.2);
+        }
+        .sidebar {
+            transition: all 0.3s ease;
+            transform: translateX(-100%);
+            z-index: 40;
+        }
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        .sidebar-link:hover {
+            background-color: rgba(22, 163, 74, 0.1);
+        }
+        .sidebar-link.active {
+            background-color: rgba(22, 163, 74, 0.2);
+            border-left: 3px solid #16a34a;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 30;
+        }
+        .overlay.active {
+            display: block;
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 flex">
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar Mobile First -->
+    <div class="sidebar fixed md:relative w-64 bg-slate-800 min-h-screen">
+        <div class="p-4 border-b border-gray-700 flex justify-between items-center md:block">
+            <div class="flex items-center">
+                <i class="fas fa-chart-line text-primary text-3xl mr-3"></i>
+                <h1 class="text-2xl font-bold">Nova<span class="text-primary">Admin</span></h1>
+            </div>
+            <button class="md:hidden text-gray-400" id="closeSidebar">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <nav class="p-4">
+            <ul class="space-y-2">
+                <li>
+                    <a href="#" class="sidebar-link active flex items-center p-3 rounded-lg">
+                        <i class="fas fa-tachometer-alt mr-3 text-primary"></i>
+                        Tableau de bord
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-link flex items-center p-3 rounded-lg">
+                        <i class="fas fa-users mr-3 text-primary"></i>
+                        Utilisateurs
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-link flex items-center p-3 rounded-lg">
+                        <i class="fas fa-wallet mr-3 text-primary"></i>
+                        Comptes
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-link flex items-center p-3 rounded-lg">
+                        <i class="fas fa-lock mr-3 text-primary"></i>
+                        Investissements
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-link flex items-center p-3 rounded-lg">
+                        <i class="fas fa-exchange-alt mr-3 text-primary"></i>
+                        Transactions
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-link flex items-center p-3 rounded-lg">
+                        <i class="fas fa-chart-pie mr-3 text-primary"></i>
+                        Rapports
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-link flex items-center p-3 rounded-lg">
+                        <i class="fas fa-cog mr-3 text-primary"></i>
+                        Paramètres
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 min-w-0">
+        <!-- Top Navigation -->
+        <header class="bg-slate-800 p-4 flex justify-between items-center border-b border-gray-700 sticky top-0 z-20">
+            <button class="md:hidden text-gray-400" id="sidebarToggle">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <div class="relative hidden xs:block">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Rechercher..." class="bg-slate-700 border border-gray-600 text-white rounded-lg py-2 pl-10 pr-4 focus:ring-primary focus:border-primary w-full md:w-64">
+                </div>
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-bell text-gray-400 text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="text-right hidden md:block">
+                            <p class="text-sm text-gray-400">Administrateur</p>
+                            <p class="font-medium">Admin User</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                            <i class="fas fa-user-shield text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="p-4 md:p-6">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6">Tableau de Bord</h2>
+
+            <!-- Stats Cards - Responsive Grid -->
+            <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+                <!-- Utilisateurs Card -->
+                <div class="bg-slate-800 rounded-xl p-4 md:p-6 card-hover">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs md:text-sm">Utilisateurs</p>
+                            <p class="text-xl md:text-2xl font-bold mt-1">1,248</p>
+                            <p class="text-xs md:text-sm text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 12% ce mois</p>
+                        </div>
+                        <div class="bg-primary bg-opacity-20 p-2 md:p-3 rounded-lg h-10 md:h-12 w-10 md:w-12 flex items-center justify-center">
+                            <i class="fas fa-users text-primary text-lg md:text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Investissements Card -->
+                <div class="bg-slate-800 rounded-xl p-4 md:p-6 card-hover">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs md:text-sm">Investissements</p>
+                            <p class="text-xl md:text-2xl font-bold mt-1">487</p>
+                            <p class="text-xs md:text-sm text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 8% ce mois</p>
+                        </div>
+                        <div class="bg-primary bg-opacity-20 p-2 md:p-3 rounded-lg h-10 md:h-12 w-10 md:w-12 flex items-center justify-center">
+                            <i class="fas fa-lock text-primary text-lg md:text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Card -->
+                <div class="bg-slate-800 rounded-xl p-4 md:p-6 card-hover">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs md:text-sm">Transactions</p>
+                            <p class="text-xl md:text-2xl font-bold mt-1">3,842</p>
+                            <p class="text-xs md:text-sm text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 24% ce mois</p>
+                        </div>
+                        <div class="bg-primary bg-opacity-20 p-2 md:p-3 rounded-lg h-10 md:h-12 w-10 md:w-12 flex items-center justify-center">
+                            <i class="fas fa-exchange-alt text-primary text-lg md:text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenus Card -->
+                <div class="bg-slate-800 rounded-xl p-4 md:p-6 card-hover">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs md:text-sm">Revenus</p>
+                            <p class="text-xl md:text-2xl font-bold mt-1">12.8M FCFA</p>
+                            <p class="text-xs md:text-sm text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 15% ce mois</p>
+                        </div>
+                        <div class="bg-primary bg-opacity-20 p-2 md:p-3 rounded-lg h-10 md:h-12 w-10 md:w-12 flex items-center justify-center">
+                            <i class="fas fa-coins text-primary text-lg md:text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section - Stack on mobile -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+                <!-- Activity Chart - Full width on mobile, 2/3 on desktop -->
+                <div class="bg-slate-800 rounded-xl p-4 md:p-6 lg:col-span-2">
+                    <div class="flex flex-col xs:flex-row xs:justify-between xs:items-center mb-4 md:mb-6">
+                        <h3 class="font-medium mb-2 xs:mb-0">Activité récente</h3>
+                        <select class="bg-slate-700 border border-gray-600 text-white text-xs md:text-sm rounded-lg px-3 md:px-4 py-1 md:py-2 focus:ring-primary focus:border-primary w-full xs:w-auto">
+                            <option>7 derniers jours</option>
+                            <option>30 derniers jours</option>
+                            <option>3 derniers mois</option>
+                        </select>
+                    </div>
+                    <div class="h-48 md:h-64">
+                        <!-- Chart placeholder - Responsive height -->
+                        <div class="flex items-end h-full space-x-1">
+                            <div class="flex-1 bg-primary bg-opacity-30 rounded-t" style="height: 30%"></div>
+                            <div class="flex-1 bg-primary bg-opacity-50 rounded-t" style="height: 45%"></div>
+                            <div class="flex-1 bg-primary bg-opacity-70 rounded-t" style="height: 60%"></div>
+                            <div class="flex-1 bg-primary rounded-t" style="height: 85%"></div>
+                            <div class="flex-1 bg-primary rounded-t" style="height: 100%"></div>
+                            <div class="flex-1 bg-primary rounded-t" style="height: 75%"></div>
+                            <div class="flex-1 bg-primary bg-opacity-70 rounded-t" style="height: 50%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400 mt-2">
+                            <span class="text-xxs xs:text-xs">Lun</span>
+                            <span class="text-xxs xs:text-xs">Mar</span>
+                            <span class="text-xxs xs:text-xs">Mer</span>
+                            <span class="text-xxs xs:text-xs">Jeu</span>
+                            <span class="text-xxs xs:text-xs">Ven</span>
+                            <span class="text-xxs xs:text-xs">Sam</span>
+                            <span class="text-xxs xs:text-xs">Dim</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pie Chart - Full width on mobile, 1/3 on desktop -->
+                <div class="bg-slate-800 rounded-xl p-4 md:p-6">
+                    <h3 class="font-medium mb-4 md:mb-6">Répartition des investissements</h3>
+                    <div class="flex justify-center h-40 md:h-48 lg:h-64">
+                        <!-- Pie chart placeholder - Responsive size -->
+                        <div class="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-8 border-primary border-opacity-30 flex items-center justify-center">
+                            <div class="absolute w-24 h-24 md:w-32 md:h-32 rounded-full border-8 border-primary border-opacity-50"></div>
+                            <div class="absolute w-16 h-16 md:w-24 md:h-24 rounded-full border-8 border-primary border-opacity-70"></div>
+                            <div class="absolute w-8 h-8 md:w-16 md:h-16 rounded-full border-8 border-primary"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 md:gap-4 mt-3 md:mt-4">
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 md:w-3 md:h-3 rounded-full bg-primary mr-1 md:mr-2"></div>
+                            <span class="text-xxs xs:text-xs md:text-sm">Plan Bronze</span>
+                        </div>
+                        <div class="text-right text-xxs xs:text-xs md:text-sm">35%</div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 md:w-3 md:h-3 rounded-full bg-primary bg-opacity-70 mr-1 md:mr-2"></div>
+                            <span class="text-xxs xs:text-xs md:text-sm">Plan Argent</span>
+                        </div>
+                        <div class="text-right text-xxs xs:text-xs md:text-sm">28%</div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 md:w-3 md:h-3 rounded-full bg-primary bg-opacity-50 mr-1 md:mr-2"></div>
+                            <span class="text-xxs xs:text-xs md:text-sm">Plan Or</span>
+                        </div>
+                        <div class="text-right text-xxs xs:text-xs md:text-sm">22%</div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 md:w-3 md:h-3 rounded-full bg-primary bg-opacity-30 mr-1 md:mr-2"></div>
+                            <span class="text-xxs xs:text-xs md:text-sm">Autres</span>
+                        </div>
+                        <div class="text-right text-xxs xs:text-xs md:text-sm">15%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions - 5 dernières avec différents statuts -->
+            <div class="bg-slate-800 rounded-xl p-4 md:p-6 mb-6 md:mb-8">
+                <div class="flex flex-col xs:flex-row xs:justify-between xs:items-center mb-4 md:mb-6">
+                    <h3 class="font-medium mb-2 xs:mb-0">5 Dernières Transactions</h3>
+                    <button class="text-primary hover:text-green-400 text-xs md:text-sm font-medium transition">
+                        Voir tout <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="bg-slate-700">
+                            <tr>
+                                <th scope="col" class="px-3 md:px-6 py-2 md:py-3 text-left text-xxs xs:text-xs md:text-xs font-medium text-gray-300 uppercase tracking-wider">ID</th>
+                                <th scope="col" class="px-3 md:px-6 py-2 md:py-3 text-left text-xxs xs:text-xs md:text-xs font-medium text-gray-300 uppercase tracking-wider">Utilisateur</th>
+                                <th scope="col" class="px-3 md:px-6 py-2 md:py-3 text-left text-xxs xs:text-xs md:text-xs font-medium text-gray-300 uppercase tracking-wider">Montant</th>
+                                <th scope="col" class="px-3 md:px-6 py-2 md:py-3 text-left text-xxs xs:text-xs md:text-xs font-medium text-gray-300 uppercase tracking-wider hidden sm:table-cell">Type</th>
+                                <th scope="col" class="px-3 md:px-6 py-2 md:py-3 text-left text-xxs xs:text-xs md:text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                                <th scope="col" class="px-3 md:px-6 py-2 md:py-3 text-left text-xxs xs:text-xs md:text-xs font-medium text-gray-300 uppercase tracking-wider hidden xs:table-cell">Date</th>
+                                <th scope="col" class="px-3 md:px-6 py-2 md:py-3 text-left text-xxs xs:text-xs md:text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-slate-800 divide-y divide-gray-700">
+                            <!-- Transaction 1 - Complété -->
+                            <tr>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">#TRX-78945</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">John Doe</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm text-green-500">+787 800 FCFA</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden sm:table-cell">Dépôt</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <span class="px-1 md:px-2 inline-flex text-xxs xs:text-xs leading-5 font-semibold rounded-full bg-green-900 text-green-300">Complété</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden xs:table-cell">15/06/2023</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <button class="text-primary hover:text-green-400 mr-1 md:mr-2">
+                                        <i class="fas fa-eye text-xs md:text-sm"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-ellipsis-v text-xs md:text-sm"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <!-- Transaction 2 - En attente -->
+                            <tr>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">#TRX-78944</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">Jane Smith</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm text-red-500">-328 000 FCFA</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden sm:table-cell">Retrait</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <span class="px-1 md:px-2 inline-flex text-xxs xs:text-xs leading-5 font-semibold rounded-full bg-yellow-900 text-yellow-300">En attente</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden xs:table-cell">14/06/2023</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <button class="text-primary hover:text-green-400 mr-1 md:mr-2">
+                                        <i class="fas fa-eye text-xs md:text-sm"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-ellipsis-v text-xs md:text-sm"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <!-- Transaction 3 - Échoué -->
+                            <tr>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">#TRX-78943</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">Robert Johnson</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm text-green-500">+85 600 FCFA</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden sm:table-cell">Intérêts</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <span class="px-1 md:px-2 inline-flex text-xxs xs:text-xs leading-5 font-semibold rounded-full bg-red-900 text-red-300">Échoué</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden xs:table-cell">10/06/2023</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <button class="text-primary hover:text-green-400 mr-1 md:mr-2">
+                                        <i class="fas fa-eye text-xs md:text-sm"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-ellipsis-v text-xs md:text-sm"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <!-- Transaction 4 - En traitement -->
+                            <tr>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">#TRX-78942</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">Alice Martin</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm text-green-500">+150 000 FCFA</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden sm:table-cell">Dépôt</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <span class="px-1 md:px-2 inline-flex text-xxs xs:text-xs leading-5 font-semibold rounded-full bg-blue-900 text-blue-300">En traitement</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden xs:table-cell">09/06/2023</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <button class="text-primary hover:text-green-400 mr-1 md:mr-2">
+                                        <i class="fas fa-eye text-xs md:text-sm"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-ellipsis-v text-xs md:text-sm"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <!-- Transaction 5 - Annulé -->
+                            <tr>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">#TRX-78941</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">Paul Dubois</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm text-red-500">-50 000 FCFA</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden sm:table-cell">Retrait</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <span class="px-1 md:px-2 inline-flex text-xxs xs:text-xs leading-5 font-semibold rounded-full bg-gray-700 text-gray-300">Annulé</span>
+                                </td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm hidden xs:table-cell">08/06/2023</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap text-xxs xs:text-xs md:text-sm">
+                                    <button class="text-primary hover:text-green-400 mr-1 md:mr-2">
+                                        <i class="fas fa-eye text-xs md:text-sm"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-ellipsis-v text-xs md:text-sm"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Users - 4 derniers membres -->
+            <div class="bg-slate-800 rounded-xl p-4 md:p-6">
+                <div class="flex flex-col xs:flex-row xs:justify-between xs:items-center mb-4 md:mb-6">
+                    <h3 class="font-medium mb-2 xs:mb-0">4 Derniers Membres</h3>
+                    <button class="text-primary hover:text-green-400 text-xs md:text-sm font-medium transition">
+                        Voir tout <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                    <!-- Membre 1 -->
+                    <div class="bg-slate-700 rounded-lg p-3 md:p-4 flex items-center card-hover">
+                        <div class="w-10 h-10 rounded-full bg-primary bg-opacity-20 flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-sm">Jean Dupont</p>
+                            <p class="text-xs text-gray-400">Inscrit: 15/06/23</p>
+                            <p class="text-xxs text-primary mt-1">Niveau: Bronze</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Membre 2 -->
+                    <div class="bg-slate-700 rounded-lg p-3 md:p-4 flex items-center card-hover">
+                        <div class="w-10 h-10 rounded-full bg-primary bg-opacity-20 flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-sm">Marie Lambert</p>
+                            <p class="text-xs text-gray-400">Inscrit: 14/06/23</p>
+                            <p class="text-xxs text-primary mt-1">Niveau: Argent</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Membre 3 -->
+                    <div class="bg-slate-700 rounded-lg p-3 md:p-4 flex items-center card-hover">
+                        <div class="w-10 h-10 rounded-full bg-primary bg-opacity-20 flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-sm">Paul Martin</p>
+                            <p class="text-xs text-gray-400">Inscrit: 13/06/23</p>
+                            <p class="text-xxs text-primary mt-1">Niveau: Or</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Membre 4 -->
+                    <div class="bg-slate-700 rounded-lg p-3 md:p-4 flex items-center card-hover">
+                        <div class="w-10 h-10 rounded-full bg-primary bg-opacity-20 flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-sm">Sophie Bernard</p>
+                            <p class="text-xs text-gray-400">Inscrit: 12/06/23</p>
+                            <p class="text-xxs text-primary mt-1">Niveau: Bronze</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        });
+
+        // Close sidebar
+        document.getElementById('closeSidebar').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        });
+
+        // Close sidebar when clicking overlay
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.remove('active');
+            this.classList.remove('active');
+        });
+
+        // Active sidebar link
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close sidebar on mobile after selection
+                if (window.innerWidth < 768) {
+                    document.querySelector('.sidebar').classList.remove('active');
+                    document.getElementById('overlay').classList.remove('active');
+                }
+            });
+        });
+
+        // Close sidebar when window is resized to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                document.getElementById('overlay').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
